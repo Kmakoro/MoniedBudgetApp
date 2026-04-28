@@ -48,6 +48,7 @@ A comprehensive Android application for tracking personal expenses, managing bud
    ```bash
    git clone https://github.com/Kmakoro/MoniedBudgetApp.git
    cd MoniedBudgetApp
+   
 
 # 🚀 Usage Guide
 ## 1. First Time Setup
@@ -197,3 +198,7 @@ Multi-currency support
 Backup/Restore functionality
 
 Fingerprint/Face ID login
+
+## ▶️ YouTube
+   ```bash
+   https://youtu.be/N9Pcvy3KOyg?si=YerJHw-VAHihpZtq
