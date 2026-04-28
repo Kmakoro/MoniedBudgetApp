@@ -45,8 +45,8 @@ class SavingsGoalAdapter(
 
         fun bind(goal: SavingsGoal) {
             tvName.text = goal.name
-            tvTarget.text = String.format("Target: $%.2f", goal.targetAmount)
-            tvSaved.text = String.format("Saved: $%.2f", goal.currentAmount)
+            tvTarget.text = String.format("Target: R%.2f", goal.targetAmount)
+            tvSaved.text = String.format("Saved: R%.2f", goal.currentAmount)
 
             val progressPercent = if (goal.targetAmount > 0) {
                 (goal.currentAmount / goal.targetAmount * 100).toInt()
