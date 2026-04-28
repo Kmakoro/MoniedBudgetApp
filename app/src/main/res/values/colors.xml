@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="completed_color">#4CAF50</color>
+    <color name="urgent_color">#FF9800</color>
+    <color name="progress_color">#2196F3</color>
+    <color name="default_color">#9C27B0</color>
+
+    <color name="completed_bg">#F1F8E9</color>
+    <color name="urgent_bg">#FFF3E0</color>
+    <color name="overdue_bg">#FFEBEE</color>
+    <!-- Theme colors (Material Design) -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+    <!-- Light theme specific -->
+    <color name="background_light">#F9FAFB</color>
+    <color name="surface_light">#FFFFFF</color>
+    <color name="text_primary_light">#1F2937</color>
+    <color name="text_secondary_light">#6B7280</color>
+
+    <!-- Dark theme (optional but add to avoid missing) -->
+    <color name="background_dark">#121212</color>
+    <color name="surface_dark">#1E1E1E</color>
+    <color name="text_primary_dark">#FFFFFF</color>
+    <color name="text_secondary_dark">#B0B0B0</color>
+
+    <!-- Brand colors (full range) -->
+    <color name="emerald_400">#34D399</color>
+    <color name="emerald_500">#10B981</color>
+    <color name="emerald_600">#059669</color>
+    <color name="emerald_700">#047857</color>
+
+    <!-- Grays (complete) -->
+    <color name="gray_100">#F3F4F6</color>
+    <color name="gray_200">#E5E7EB</color>
+    <color name="gray_500">#6B7280</color>
+    <color name="gray_600">#4B5563</color>
+    <color name="gray_700">#374151</color>
+    <color name="gray_800">#1F2937</color>
+    <color name="gray_900">#111827</color>
+
+    <!-- Reds -->
+    <color name="red_100">#FEE2E2</color>
+    <color name="red_500">#EF4444</color>   <!-- ADDED for fragment_dashboard -->
+    <color name="red_600">#DC2626</color>
+    <color name="red_800">#991B1B</color>
+
+    <!-- Blues -->
+    <color name="blue_500">#3B82F6</color>
+    <color name="blue_600">#2563EB</color>
+
+    <!-- Amber -->
+    <color name="amber_400">#FBBF24</color>
+
+    <!-- Basic -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="error">#DC2626</color>
+</resources>

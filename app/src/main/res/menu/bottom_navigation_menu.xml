@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_add"
+        android:icon="@drawable/ic_add"
+        android:title="@string/nav_add" />
+
+    <item
+        android:id="@+id/navigation_history"
+        android:icon="@drawable/ic_history"
+        android:title="@string/nav_history" />
+
+    <item
+        android:id="@+id/navigation_category"
+        android:icon="@drawable/ic_category"
+        android:title="@string/nav_category" />
+
+    <item
+        android:id="@+id/navigation_spending_goals"
+        android:icon="@drawable/baseline_sports_soccer_24"
+        android:title="@string/goals" />
+    <item
+        android:id="@+id/navigation_report"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Report" />
+</menu>
