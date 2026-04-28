@@ -48,22 +48,23 @@ A comprehensive Android application for tracking personal expenses, managing bud
    ```bash
    git clone https://github.com/Kmakoro/MoniedBudgetApp.git
    cd MoniedBudgetApp
-   🚀 Usage Guide
-### 1. First Time Setup
+
+# 🚀 Usage Guide
+## 1. First Time Setup
 Launch the app
 
 Create an account (Sign Up)
 
 Login with your credentials
 
-### 2. Create Categories
+## 2. Create Categories
 Navigate to "Manage Categories"
 
 Tap "Add Category"
 
 Enter category name (e.g., "Food", "Transport", "Entertainment")
 
-### 3. Add an Expense
+## 3. Add an Expense
 Tap "Add Expense" on main screen
 
 Fill in:
@@ -82,7 +83,7 @@ Optional: Tap camera icon to attach photo
 
 Tap "Save"
 
-### 4. Set Monthly Goals
+## 4. Set Monthly Goals
 Go to "Monthly Goals"
 
 Use SeekBars or enter values for:
@@ -93,7 +94,7 @@ Maximum spending goal
 
 Goals are saved per month
 
-### 5. View Reports
+## 5. View Reports
 Expense List: Select date range → View all expenses with photos
 
 Category Summary: Select date range → View total per category
@@ -138,7 +139,7 @@ Entertainment
 
 Bills & Utilities
 
-###📋 Requirements Checklist
+## 📋 Requirements Checklist
 Apply layouts in an app
 
 Use EditText, NumberFormat, and SeekBar
@@ -167,7 +168,7 @@ Photo access from expense list
 
 Category totals by selectable period
 
-###🐛 Known Issues & Limitations
+## 🐛 Known Issues & Limitations
 Photos are stored locally; deleting app removes all images
 
 No cloud backup or sync functionality
