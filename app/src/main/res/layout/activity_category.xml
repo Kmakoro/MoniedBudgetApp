@@ -50,7 +50,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Organize your expenses by creating and managing categories"
+            android:text="@string/organize_your_expenses_by_creating_and_managing_categories"
             android:textColor="#6B7280"
             android:textSize="14sp"
             android:layout_marginBottom="16dp"/>
@@ -68,7 +68,7 @@
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="Add New Category"
+            android:text="@string/add_new_category"
             android:textColor="#6B7280"
             app:strokeColor="#D1D5DB"
             app:strokeWidth="2dp"

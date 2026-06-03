@@ -37,6 +37,11 @@
         <item name="textInputStyle">@style/Widget.Monied.TextInputLayout</item>
     </style>
 
+    <style name="Theme.BudgetApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
     <!-- Theme without ActionBar -->
     <style name="Theme.Monied.NoActionBar" parent="Theme.Monied">
         <item name="windowActionBar">false</item>
