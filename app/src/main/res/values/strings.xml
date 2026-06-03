@@ -196,4 +196,6 @@
     <string name="_0_00">0.00</string>
     <string name="amount_zar">Amount (ZAR)</string>
     <string name="goals">Goals</string>
+    <string name="add_new_category">Add New Category</string>
+    <string name="organize_your_expenses_by_creating_and_managing_categories">Organize your expenses by creating and managing categories</string>
 </resources>
