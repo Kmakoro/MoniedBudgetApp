@@ -44,12 +44,21 @@ class LoginActivity : AppCompatActivity() {
             }
 
             if (dbHelper.checkUserCredentials(username, password)) {
-                val prefs = getSharedPreferences("MoniedPrefs", Context.MODE_PRIVATE)
-                prefs.edit().putString("loggedInUser", username).apply()
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
+                val user = dbHelper.getUser(username)
+                if (user != null) {
+                    val prefs = getSharedPreferences("MoniedPrefs", Context.MODE_PRIVATE)
+                    prefs.edit().apply {
+                        putString("loggedInUser", username)
+                        putInt("userId", user.id)
+                        apply()
+                    }
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                } else {
+                    Toast.makeText(this, "Error fetching user data", Toast.LENGTH_SHORT).show()
+                }
             } else {
-                tvError.text = "Invalid username or password.\nTry 'cyril' / 'password123'"
+                tvError.text = "Invalid username or password.\nDemo: 'cyril' / 'Password@123'"
                 tvError.visibility = android.view.View.VISIBLE
                 Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show()
             }
