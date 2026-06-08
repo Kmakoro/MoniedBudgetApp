@@ -5,20 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/tvGoalName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Goal Name"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -33,7 +36,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Target: $0"
+                android:text="Target: R0"
+                android:textColor="?attr/android:textColorSecondary"
                 android:textSize="14sp" />
 
             <TextView
@@ -41,8 +45,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Saved: $0"
-                android:textSize="14sp" />
+                android:text="Saved: R0"
+                android:textColor="@color/emerald_600"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textAlignment="viewEnd" />
 
         </LinearLayout>
 
@@ -51,8 +58,8 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="6dp"
-            android:layout_marginTop="8dp"
-            android:progressTint="@color/purple_500" />
+            android:layout_marginTop="12dp"
+            android:progressTint="@color/emerald_600" />
 
         <TextView
             android:id="@+id/tvProgressPercent"
@@ -60,12 +67,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="0%"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="12sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/dividerHorizontal"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:orientation="horizontal">
 
             <TextView
@@ -77,8 +91,9 @@
                 android:gravity="center"
                 android:padding="8dp"
                 android:text="Add Money"
-                android:textColor="@color/purple_500"
-                android:textSize="14sp" />
+                android:textColor="@color/emerald_600"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvEdit"
@@ -89,7 +104,7 @@
                 android:gravity="center"
                 android:padding="8dp"
                 android:text="Edit"
-                android:textColor="@color/blue_500"
+                android:textColor="@color/blue_600"
                 android:textSize="14sp" />
 
             <TextView
@@ -101,7 +116,7 @@
                 android:gravity="center"
                 android:padding="8dp"
                 android:text="Delete"
-                android:textColor="@color/red_500"
+                android:textColor="@color/red_600"
                 android:textSize="14sp" />
 
         </LinearLayout>
