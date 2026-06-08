@@ -2,6 +2,7 @@ package com.monied.budgetapp.ui.main
 
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.widget.*
@@ -16,6 +17,7 @@ import com.monied.budgetapp.data.SavingsGoal
 import com.monied.budgetapp.data.DatabaseHelper
 import com.monied.budgetapp.R
 import com.monied.budgetapp.adapters.SavingsGoalAdapter
+
 class SavingsGoalActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
@@ -27,7 +29,9 @@ class SavingsGoalActivity : AppCompatActivity() {
     private lateinit var tvTotalTarget: TextView
     private lateinit var tvOverallProgress: TextView
     private lateinit var progressBarOverall: ProgressBar
+    private lateinit var btnBack: ImageButton
 
+    private var currentUserId: Int = -1
     private val goalsList = mutableListOf<SavingsGoal>()
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
@@ -36,12 +40,21 @@ class SavingsGoalActivity : AppCompatActivity() {
         setContentView(R.layout.activity_savings_goal)
 
         dbHelper = DatabaseHelper(this)
+
+        val prefs = getSharedPreferences("MoniedPrefs", Context.MODE_PRIVATE)
+        val username = prefs.getString("loggedInUser", "cyril") ?: "cyril"
+        currentUserId = dbHelper.getUser(username)?.id ?: -1
+
         initViews()
         setupRecyclerView()
         loadSavingsGoals()
 
         btnAddGoal.setOnClickListener {
             showAddEditGoalDialog(null)
+        }
+
+        btnBack.setOnClickListener {
+            finish()
         }
     }
 
@@ -53,6 +66,7 @@ class SavingsGoalActivity : AppCompatActivity() {
         tvTotalTarget = findViewById(R.id.tvTotalTarget)
         tvOverallProgress = findViewById(R.id.tvOverallProgress)
         progressBarOverall = findViewById(R.id.progressBarOverall)
+        btnBack = findViewById(R.id.btnBack)
     }
 
     private fun setupRecyclerView() {
@@ -69,7 +83,9 @@ class SavingsGoalActivity : AppCompatActivity() {
 
     private fun loadSavingsGoals() {
         goalsList.clear()
-        goalsList.addAll(dbHelper.getSavingsGoals())
+        if (currentUserId != -1) {
+            goalsList.addAll(dbHelper.getSavingsGoals(currentUserId))
+        }
         adapter.notifyDataSetChanged()
         updateSummary()
     }
@@ -102,11 +118,9 @@ class SavingsGoalActivity : AppCompatActivity() {
             etCurrentAmount.setText(goal.currentAmount.toString())
             etTargetDate.setText(goal.targetDate)
         } else {
-            // For new goals, current amount is optional, default 0
             tilCurrentAmount.hint = "Current Amount (R) (Optional)"
         }
 
-        // Date picker for target date
         etTargetDate.setOnClickListener {
             showDatePickerDialog { date ->
                 etTargetDate.setText(date)
@@ -131,8 +145,12 @@ class SavingsGoalActivity : AppCompatActivity() {
                         Toast.makeText(this, "Goal updated", Toast.LENGTH_SHORT).show()
                     } else {
                         val currentAmount = etCurrentAmount.text.toString().toDoubleOrNull() ?: 0.0
-                        dbHelper.addSavingsGoal(name, targetAmount, currentAmount, targetDate)
-                        Toast.makeText(this, "Goal added", Toast.LENGTH_SHORT).show()
+                        if (currentUserId != -1) {
+                            dbHelper.addSavingsGoal(name, targetAmount, currentAmount, targetDate, currentUserId)
+                            Toast.makeText(this, "Goal added", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
+                        }
                     }
                     loadSavingsGoals()
                 } else {
@@ -215,7 +233,7 @@ class SavingsGoalActivity : AppCompatActivity() {
 
     private fun showGoalAchievedDialog(goal: SavingsGoal) {
         AlertDialog.Builder(this)
-            .setTitle("🎉 Congratulations! 🎉")
+            .setTitle("\uD83C\uDF89 Congratulations! \uD83C\uDF89")
             .setMessage("You've achieved your savings goal: ${goal.name}!\nWell done!")
             .setPositiveButton("Awesome!", null)
             .show()
