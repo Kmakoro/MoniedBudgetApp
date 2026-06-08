@@ -1,6 +1,8 @@
 package com.monied.budgetapp
 
 import android.app.Application
+import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import com.monied.budgetapp.data.database.MoniedDatabase
 
 /**
@@ -14,6 +16,14 @@ class MoniedApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        // Initialize any application-level components here
+
+        // Apply Dark Mode preference on startup
+        val prefs = getSharedPreferences("MoniedPrefs", Context.MODE_PRIVATE)
+        val isDarkMode = prefs.getBoolean("isDarkMode", false)
+        if (isDarkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
     }
 }
