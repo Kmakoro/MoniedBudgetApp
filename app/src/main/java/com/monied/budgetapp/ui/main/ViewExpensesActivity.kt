@@ -1,7 +1,5 @@
 package com.monied.budgetapp.ui.main
 
-
-
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -12,15 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.monied.budgetapp.R
 import com.monied.budgetapp.adapters.ExpenseAdapter
 import com.monied.budgetapp.data.DatabaseHelper
-//import com.monied.budgetapp.database.ExpenseSummary
 import com.monied.budgetapp.dialog.DateRangePickerDialog
 import com.monied.budgetapp.models.Expense
-
-
 import android.app.Dialog
-
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.view.ViewGroup
 import com.bumptech.glide.Glide
-
 
 class ViewExpensesActivity : AppCompatActivity() {
 
@@ -33,6 +30,7 @@ class ViewExpensesActivity : AppCompatActivity() {
     private lateinit var tvTotalCount: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var tvNoData: TextView
+    private lateinit var btnBack: ImageButton
 
     private val expensesList = mutableListOf<Expense>()
     private var currentStartDate = ""
@@ -52,6 +50,10 @@ class ViewExpensesActivity : AppCompatActivity() {
         btnSelectDate.setOnClickListener {
             showDateRangePicker()
         }
+
+        btnBack.setOnClickListener {
+            finish()
+        }
     }
 
     private fun initViews() {
@@ -62,6 +64,7 @@ class ViewExpensesActivity : AppCompatActivity() {
         tvTotalCount = findViewById(R.id.tvTotalCount)
         progressBar = findViewById(R.id.progressBar)
         tvNoData = findViewById(R.id.tvNoData)
+        btnBack = findViewById(R.id.btnBack)
     }
 
     private fun setupRecyclerView() {
@@ -100,6 +103,14 @@ class ViewExpensesActivity : AppCompatActivity() {
     }
 
     private fun loadExpenses(startDate: String, endDate: String) {
+        val prefs = getSharedPreferences("MoniedPrefs", Context.MODE_PRIVATE)
+        val userId = prefs.getInt("userId", -1)
+
+        if (userId == -1) {
+            Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         currentStartDate = startDate
         currentEndDate = endDate
 
@@ -109,7 +120,7 @@ class ViewExpensesActivity : AppCompatActivity() {
         tvDateRange.text = formatDateRange(startDate, endDate)
 
         // Load expenses from database
-        val expenses = dbHelper.getExpensesByDateRange(startDate, endDate)
+        val expenses = dbHelper.getExpensesByDateRange(startDate, endDate, userId)
         expensesList.clear()
         expensesList.addAll(expenses)
         adapter.updateData(expensesList)
@@ -135,6 +146,10 @@ class ViewExpensesActivity : AppCompatActivity() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_expense_details)
 
+        // Set dialog background to transparent to allow for rounded corners
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
         // Initialize views
         val tvAmount = dialog.findViewById<TextView>(R.id.tvDetailAmount)
         val tvDescription = dialog.findViewById<TextView>(R.id.tvDetailDescription)
@@ -143,8 +158,9 @@ class ViewExpensesActivity : AppCompatActivity() {
         val tvTime = dialog.findViewById<TextView>(R.id.tvDetailTime)
         val tvDuration = dialog.findViewById<TextView>(R.id.tvDetailDuration)
         val ivPhoto = dialog.findViewById<ImageView>(R.id.ivDetailPhoto)
-        val btnDelete = dialog.findViewById<Button>(R.id.btnDetailDelete)
-        val btnClose = dialog.findViewById<Button>(R.id.btnDetailClose)
+        val btnDelete = dialog.findViewById<View>(R.id.btnDetailDelete)
+        val btnClose = dialog.findViewById<View>(R.id.btnDetailClose)
+        val emptyPhotoView = dialog.findViewById<View>(R.id.tvNoImage)
 
         // Set data
         tvAmount.text = expense.formattedAmount
@@ -162,15 +178,15 @@ class ViewExpensesActivity : AppCompatActivity() {
                 .error(R.drawable.ic_image_error)
                 .into(ivPhoto)
             ivPhoto.visibility = View.VISIBLE
+            emptyPhotoView?.visibility = View.GONE
+
             // Make image clickable to view fullscreen
             ivPhoto.setOnClickListener {
                 showFullscreenImage(expense.photoUri)
             }
         } else {
             ivPhoto.visibility = View.GONE
-            // Show placeholder
-            val tvNoImage = dialog.findViewById<TextView>(R.id.tvNoImage)
-            tvNoImage.visibility = View.VISIBLE
+            emptyPhotoView?.visibility = View.VISIBLE
         }
 
         btnDelete.setOnClickListener {
