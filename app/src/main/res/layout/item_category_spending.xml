@@ -9,17 +9,19 @@
         android:id="@+id/tvCatName"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textColor="?attr/colorOnSurface" />
 
     <TextView
         android:id="@+id/tvCatAmount"
         android:layout_width="wrap_content"
         android:layout_marginEnd="16dp"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textColor="?attr/colorOnSurface" />
 
     <TextView
         android:id="@+id/tvCatPercent"
         android:layout_width="wrap_content"
         android:textSize="14sp"
-        android:textColor="@color/gray_600" />
+        android:textColor="?attr/android:textColorSecondary" />
 </LinearLayout>
