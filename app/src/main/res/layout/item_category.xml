@@ -6,7 +6,7 @@
     android:layout_marginBottom="12dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
-    app:cardBackgroundColor="#FFFFFF">
+    app:cardBackgroundColor="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,11 +19,11 @@
             android:id="@+id/tvCategoryIcon"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:background="#3B82F6"
+            android:background="@color/blue_500"
             android:text="🛒"
             android:textSize="24sp"
             android:gravity="center"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/white" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Groceries"
-                android:textColor="#111827"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="12 expenses"
-                android:textColor="#6B7280"
+                android:textColor="?attr/android:textColorSecondary"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -56,7 +56,7 @@
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_menu_edit"
-            app:tint="#6B7280" />
+            app:tint="?attr/android:textColorSecondary" />
 
         <ImageButton
             android:id="@+id/btnDelete"
@@ -64,6 +64,6 @@
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_menu_delete"
-            app:tint="#EF4444" />
+            app:tint="@color/red_500" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
