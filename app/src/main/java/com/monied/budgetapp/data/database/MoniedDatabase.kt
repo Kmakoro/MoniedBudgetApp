@@ -69,14 +69,10 @@ abstract class MoniedDatabase : RoomDatabase() {
         }
 
         /**
-         * Populate database with mock data
+         * Populate database with initial categories only
          */
         private suspend fun populateDatabase(database: MoniedDatabase) {
             val categoryDao = database.categoryDao()
-            val expenseDao = database.expenseDao()
-            val budgetGoalDao = database.budgetGoalDao()
-            val savingsGoalDao = database.savingsGoalDao()
-            val alertDao = database.budgetAlertDao()
 
             // Insert default categories
             val categories = listOf(
@@ -88,110 +84,9 @@ abstract class MoniedDatabase : RoomDatabase() {
                 Category(name = "Personal", color = "#14B8A6", icon = "👤")
             )
 
-            val categoryIds = mutableListOf<Long>()
             categories.forEach { category ->
-                categoryIds.add(categoryDao.insertCategory(category))
+                categoryDao.insertCategory(category)
             }
-
-            // Insert mock expenses inside Database
-            val now = Date()
-            val mockExpenses = listOf(
-                Expense(
-                    amount = 450.0,
-                    date = now,
-                    startTime = "10:30",
-                    categoryId = categoryIds[0],
-                    description = "Groceries at Amalinda Spar"
-                ),
-                Expense(
-                    amount = 120.0,
-                    date = Date(now.time - 86400000), // Yesterday
-                    startTime = "14:15",
-                    categoryId = categoryIds[1],
-                    description = "Taxi to work"
-                ),
-                Expense(
-                    amount = 325.0,
-                    date = Date(now.time - 172800000), // 2 days ago
-                    startTime = "19:00",
-                    categoryId = categoryIds[2],
-                    description = "Movie tickets"
-                )
-            )
-
-            mockExpenses.forEach { expense ->
-                expenseDao.insertExpense(expense)
-            }
-
-            // Update category expense counts
-            categoryIds.forEach { categoryId ->
-                categoryDao.updateExpenseCount(categoryId)
-            }
-
-            // Insert budget goal for current month
-            val currentMonth = "2026-03" // March 2026
-            budgetGoalDao.insertBudgetGoal(
-                BudgetGoal(
-                    month = currentMonth,
-                    minimumGoal = 500.0,
-                    maximumGoal = 2000.0
-                )
-            )
-
-            // Insert mock savings goals
-            savingsGoalDao.insertSavingsGoal(
-                SavingsGoal(
-                    name = "Emergency Fund",
-                    targetAmount = 10000.0,
-                    currentAmount = 6500.0,
-                    deadline = Date(System.currentTimeMillis() + 25056000000), // ~290 days
-                    icon = "🛡️",
-                    color = "#3B82F6"
-                )
-            )
-
-            savingsGoalDao.insertSavingsGoal(
-                SavingsGoal(
-                    name = "Vacation to Cape Town",
-                    targetAmount = 5000.0,
-                    currentAmount = 2800.0,
-                    deadline = Date(System.currentTimeMillis() + 9158400000), // ~106 days
-                    icon = "✈️",
-                    color = "#A855F7"
-                )
-            )
-
-            savingsGoalDao.insertSavingsGoal(
-                SavingsGoal(
-                    name = "New Laptop",
-                    targetAmount = 15000.0,
-                    currentAmount = 12000.0,
-                    deadline = Date(System.currentTimeMillis() + 2592000000), // ~30 days
-                    icon = "💻",
-                    color = "#EC4899"
-                )
-            )
-
-            // Insert mock alerts
-            alertDao.insertAlert(
-                BudgetAlert(
-                    title = "Approaching Maximum Budget",
-                    message = "You've spent R 1,245 of your R 2,000 maximum budget (62%)",
-                    type = AlertType.BUDGET_WARNING,
-                    severity = AlertSeverity.WARNING,
-                    category = "Overall Budget"
-                )
-            )
-
-            alertDao.insertAlert(
-                BudgetAlert(
-                    title = "Category Budget Exceeded",
-                    message = "Groceries spending (R 450) exceeded your R 400 category limit",
-                    type = AlertType.CATEGORY_ALERT,
-                    severity = AlertSeverity.CRITICAL,
-                    category = "Groceries"
-                )
-            )
         }
     }
 }
