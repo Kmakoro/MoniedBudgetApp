@@ -28,6 +28,7 @@ class SpendingInsightsActivity : AppCompatActivity() {
     private lateinit var gamificationManager: GamificationManager
     private var userId: Int = -1
 
+    //Override onCreate to set up the activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySpendingInsightsBinding.inflate(layoutInflater)
