@@ -1,8 +1,10 @@
 package com.monied.budgetapp.ui.main
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +21,7 @@ class SpendingReportActivity : AppCompatActivity() {
     private lateinit var btnEndDate: Button
     private lateinit var btnGenerateReport: Button
     private lateinit var rvReportList: RecyclerView
+    private lateinit var btnBack: ImageButton
 
     private lateinit var databaseHelper: DatabaseHelper
     private lateinit var reportAdapter: ReportAdapter
@@ -37,6 +40,7 @@ class SpendingReportActivity : AppCompatActivity() {
         btnEndDate = findViewById(R.id.btnEndDate)
         btnGenerateReport = findViewById(R.id.btnGenerateReport)
         rvReportList = findViewById(R.id.rvReportList)
+        btnBack = findViewById(R.id.btnBack)
 
         // Setup the Recycler View empty initially
         reportAdapter = ReportAdapter(emptyList())
@@ -44,6 +48,8 @@ class SpendingReportActivity : AppCompatActivity() {
         rvReportList.adapter = reportAdapter
 
         // Click Listeners
+        btnBack.setOnClickListener { finish() }
+
         btnStartDate.setOnClickListener { showDatePicker { date ->
             selectedStartDate = date
             btnStartDate.text = date
@@ -60,8 +66,11 @@ class SpendingReportActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            val prefs = getSharedPreferences("MoniedPrefs", Context.MODE_PRIVATE)
+            val userId = prefs.getInt("userId", -1)
+
             // Ask your pre-existing Database function for the data!
-            val reportData = databaseHelper.getCategorySpendingForDateRange(selectedStartDate, selectedEndDate)
+            val reportData = databaseHelper.getCategorySpendingForDateRange(selectedStartDate, selectedEndDate, userId)
 
             if (reportData.isEmpty()) {
                 Toast.makeText(this, "No expenses found in this date range.", Toast.LENGTH_SHORT).show()
