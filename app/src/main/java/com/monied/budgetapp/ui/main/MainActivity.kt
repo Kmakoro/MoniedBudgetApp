@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.navigation_report -> {
-                    val intent = android.content.Intent(this, com.monied.budgetapp.ui.main.SpendingReportActivity::class.java)
+                    val intent = Intent(this, SpendingReportActivity::class.java)
                     startActivity(intent)
                     true
                 }
@@ -49,18 +49,20 @@ class MainActivity : AppCompatActivity() {
         }
         // Default fragment when MainActivity opens
         if (savedInstanceState == null) {
-            replaceFragment(DashboardFragment())
+            replaceFragment(DashboardFragment(), false)
         }
     }
 
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
+    private fun replaceFragment(fragment: Fragment, addToBackStack: Boolean = false) {
+        val transaction = supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
-            .commit()
-
+        if (addToBackStack) {
+            transaction.addToBackStack(null)
+        }
+        transaction.commit()
     }
 
     fun openProfile() {
-        replaceFragment(ProfileFragment())
+        replaceFragment(ProfileFragment(), true)
     }
 }
