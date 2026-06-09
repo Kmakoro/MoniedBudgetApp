@@ -6,14 +6,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import com.monied.budgetapp.R
 import com.monied.budgetapp.databinding.FragmentDashboardBinding
-import com.monied.budgetapp.ui.main.SpendingInsightsActivity
-import com.monied.budgetapp.ui.main.ViewExpensesActivity
+import com.monied.budgetapp.ui.main.*
 import com.monied.budgetapp.ui.dialog.BadgesDialogFragment
-import com.monied.budgetapp.ui.main.MainActivity
-import com.monied.budgetapp.ui.main.SavingsGoalActivity
+import com.monied.budgetapp.ui.dialog.AlertsDialogFragment
 import com.monied.budgetapp.data.DatabaseHelper
+import com.monied.budgetapp.models.Expense
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -53,38 +56,43 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupUI() {
-        // Trophy button for gamification
         binding.ivTrophy.setOnClickListener {
             BadgesDialogFragment().show(parentFragmentManager, "BadgesDialog")
         }
 
-        // Profile icon click
         binding.ivProfileAvatar.setOnClickListener {
             (activity as? MainActivity)?.openProfile()
         }
 
-        // Budget Summary card click to view insights
         binding.cardBudgetSummary.setOnClickListener {
             startActivity(Intent(requireContext(), SpendingInsightsActivity::class.java))
         }
 
-        // Savings Goals card click
         binding.cardSavingsGoals.setOnClickListener {
             startActivity(Intent(requireContext(), SavingsGoalActivity::class.java))
         }
 
-        // Budget Alerts card click
         binding.cardBudgetAlerts.setOnClickListener {
-            // Show alerts in a dialog or navigate to history
-            showAlertsDialog()
+            AlertsDialogFragment().show(parentFragmentManager, "AlertsDialog")
         }
 
-        // Budget Goals card click
-        binding.cardBudgetGoals.setOnClickListener {
+        // Quick Actions
+        binding.actionAddCategory.setOnClickListener {
+            startActivity(Intent(requireContext(), CategoryActivity::class.java))
+        }
+
+        binding.actionSetBudget.setOnClickListener {
             showSetBudgetDialog()
         }
 
-        // View All expenses click
+        binding.actionSavings.setOnClickListener {
+            startActivity(Intent(requireContext(), SavingsGoalActivity::class.java))
+        }
+
+        binding.actionReports.setOnClickListener {
+            startActivity(Intent(requireContext(), SpendingReportActivity::class.java))
+        }
+
         binding.tvViewAll.setOnClickListener {
             startActivity(Intent(requireContext(), ViewExpensesActivity::class.java))
         }
@@ -123,32 +131,28 @@ class DashboardFragment : Fragment() {
         val alerts = dbHelper.getAlerts(userId)
         binding.tvAlertCount.text = "${alerts.size} New"
 
-        // Recent Expenses
-        val expenses = dbHelper.getExpensesByDateRange("", "", userId) // get latest
+        // Load Recent Expenses into the container
+        val expenses = dbHelper.getExpensesByDateRange("", "", userId)
+        binding.expensesContainer.removeAllViews()
+        
         if (expenses.isNotEmpty()) {
             binding.tvNoExpenses.visibility = View.GONE
-            val latest = expenses.first()
-            binding.tvNoExpenses.text = "Latest: ${latest.description} - R${String.format(Locale.getDefault(), "%.2f", latest.amount)}"
-            binding.tvNoExpenses.visibility = View.VISIBLE
+            val displayCount = if (expenses.size > 5) 5 else expenses.size
+            val inflater = LayoutInflater.from(requireContext())
+            
+            for (i in 0 until displayCount) {
+                val expense = expenses[i]
+                val itemView = inflater.inflate(R.layout.item_recent_transaction, binding.expensesContainer, false)
+                
+                itemView.findViewById<TextView>(R.id.tvDescription).text = expense.description
+                itemView.findViewById<TextView>(R.id.tvCategoryDate).text = "${expense.categoryName} • ${expense.date}"
+                itemView.findViewById<TextView>(R.id.tvAmount).text = "- R ${String.format(Locale.getDefault(), "%.2f", expense.amount)}"
+                
+                binding.expensesContainer.addView(itemView)
+            }
         } else {
-            binding.tvNoExpenses.text = "No recent expenses"
             binding.tvNoExpenses.visibility = View.VISIBLE
         }
-    }
-
-    private fun showAlertsDialog() {
-        val alerts = dbHelper.getAlerts(userId)
-        if (alerts.isEmpty()) {
-            android.widget.Toast.makeText(context, "No new alerts", android.widget.Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val alertMessages = alerts.map { "${it.title}: ${it.message}\n(${it.date})" }.toTypedArray()
-        androidx.appcompat.app.AlertDialog.Builder(requireContext())
-            .setTitle("Budget Alerts")
-            .setItems(alertMessages, null)
-            .setPositiveButton("Close", null)
-            .show()
     }
 
     private fun showSetBudgetDialog() {
@@ -156,19 +160,19 @@ class DashboardFragment : Fragment() {
         val currentMonth = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(calendar.time)
         val budgetGoal = dbHelper.getBudgetGoal(currentMonth, userId)
 
-        val dialogView = LayoutInflater.from(requireContext()).inflate(com.monied.budgetapp.R.layout.dialog_savings_goal, null)
-        val etMin = dialogView.findViewById<android.widget.EditText>(com.monied.budgetapp.R.id.etTargetAmount)
-        val etMax = dialogView.findViewById<android.widget.EditText>(com.monied.budgetapp.R.id.etCurrentAmount)
-        val etMonth = dialogView.findViewById<android.widget.EditText>(com.monied.budgetapp.R.id.etGoalName)
-        val etDate = dialogView.findViewById<android.widget.EditText>(com.monied.budgetapp.R.id.etTargetDate)
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_savings_goal, null)
+        val etMin = dialogView.findViewById<TextInputEditText>(R.id.etTargetAmount)
+        val etMax = dialogView.findViewById<TextInputEditText>(R.id.etCurrentAmount)
+        val etMonth = dialogView.findViewById<TextInputEditText>(R.id.etGoalName)
+        val etDate = dialogView.findViewById<TextInputEditText>(R.id.etTargetDate)
+        val tilMin = dialogView.findViewById<TextInputLayout>(R.id.tilTargetAmount)
+        val tilMax = dialogView.findViewById<TextInputLayout>(R.id.tilCurrentAmount)
 
-        dialogView.findViewById<com.google.android.material.textfield.TextInputLayout>(com.monied.budgetapp.R.id.tilCurrentAmount).hint = "Maximum Budget (R)"
+        tilMin.hint = "Minimum Goal (R)"
+        tilMax.hint = "Maximum Budget (R)"
         etMonth.setText(SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(calendar.time))
         etMonth.isEnabled = false
         etDate.visibility = View.GONE
-
-        val tilMin = etMin.parent.parent as com.google.android.material.textfield.TextInputLayout
-        tilMin.hint = "Minimum Goal (R)"
 
         etMin.setText((budgetGoal?.minGoal ?: 500.0).toString())
         etMax.setText((budgetGoal?.maxGoal ?: 2000.0).toString())
