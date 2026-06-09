@@ -52,12 +52,6 @@ class HistoryFragment : Fragment() {
         val btnFilter = view.findViewById<Button>(R.id.btnFilter)
         val tvTotalAmount = view.findViewById<TextView>(R.id.tvTotalAmount)
         val tvCount = view.findViewById<TextView>(R.id.tvCount)
-        val btnBack = view.findViewById<ImageButton>(R.id.btnBack)
-
-        btnBack.setOnClickListener {
-            // Fix: Use standard back navigation instead of referring to a non-existent menu item
-            requireActivity().onBackPressedDispatcher.onBackPressed()
-        }
 
         etStartDate.setOnClickListener { showDatePicker(etStartDate) }
         etEndDate.setOnClickListener { showDatePicker(etEndDate) }
