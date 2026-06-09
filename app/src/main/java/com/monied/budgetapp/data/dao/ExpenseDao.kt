@@ -32,6 +32,9 @@ interface ExpenseDao {
     @Query("SELECT SUM(amount) FROM expenses WHERE categoryId = :categoryId AND date BETWEEN :startDate AND :endDate")
     fun getCategorySpending(categoryId: Long, startDate: Date, endDate: Date): LiveData<Double>
 
+    @Query("SELECT SUM(amount) FROM expenses WHERE categoryId = :categoryId AND date BETWEEN :startDate AND :endDate")
+    suspend fun getCategorySpendingSync(categoryId: Long, startDate: Date, endDate: Date): Double?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExpense(expense: Expense): Long
 
