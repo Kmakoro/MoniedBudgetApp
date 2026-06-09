@@ -27,7 +27,6 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_add -> {
-                    // Navigate to Add Expense - using Fragment now to keep Nav Bar
                     replaceFragment(AddExpenseFragment()) 
                     true
                 }
@@ -43,7 +42,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Default fragment when MainActivity opens
         if (savedInstanceState == null) {
             binding.bottomNavigation.selectedItemId = R.id.navigation_home
         }
@@ -57,5 +55,9 @@ class MainActivity : AppCompatActivity() {
 
     fun openProfile() {
         binding.bottomNavigation.selectedItemId = R.id.navigation_profile
+    }
+
+    fun openHome() {
+        binding.bottomNavigation.selectedItemId = R.id.navigation_home
     }
 }
