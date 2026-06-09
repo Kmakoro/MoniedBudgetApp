@@ -15,15 +15,6 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_back"
-            app:tint="@color/white"
-            android:contentDescription="@string/cd_back_button" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
