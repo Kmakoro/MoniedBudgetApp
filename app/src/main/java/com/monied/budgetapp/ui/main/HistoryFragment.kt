@@ -1,6 +1,7 @@
 package com.monied.budgetapp.ui.main
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -50,6 +52,12 @@ class HistoryFragment : Fragment() {
         val btnFilter = view.findViewById<Button>(R.id.btnFilter)
         val tvTotalAmount = view.findViewById<TextView>(R.id.tvTotalAmount)
         val tvCount = view.findViewById<TextView>(R.id.tvCount)
+        val btnBack = view.findViewById<ImageButton>(R.id.btnBack)
+
+        btnBack.setOnClickListener {
+            // Fix: Use standard back navigation instead of referring to a non-existent menu item
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
 
         etStartDate.setOnClickListener { showDatePicker(etStartDate) }
         etEndDate.setOnClickListener { showDatePicker(etEndDate) }
@@ -58,7 +66,8 @@ class HistoryFragment : Fragment() {
             loadExpenses(etStartDate.text.toString(), etEndDate.text.toString(), tvTotalAmount, tvCount)
         }
 
-        val dateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        // Use yyyy-MM-dd format to match DatabaseHelper and AddExpenseActivity
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val cal = Calendar.getInstance()
         etEndDate.setText(dateFormat.format(cal.time))
         cal.add(Calendar.DAY_OF_MONTH, -10)
@@ -69,13 +78,18 @@ class HistoryFragment : Fragment() {
     private fun showDatePicker(editText: TextInputEditText) {
         val c = Calendar.getInstance()
         DatePickerDialog(requireContext(), { _, year, month, day ->
-            editText.setText("$year/${month+1}/$day")
+            // Use consistent yyyy-MM-dd format
+            val formattedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, day)
+            editText.setText(formattedDate)
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
     }
 
     private fun loadExpenses(start: String, end: String, totalView: TextView, countView: TextView) {
+        val prefs = requireContext().getSharedPreferences("MoniedPrefs", Context.MODE_PRIVATE)
+        val userId = prefs.getInt("userId", -1)
+
         expenseList.clear()
-        expenseList.addAll(dbHelper.getExpensesByDateRange(start, end))
+        expenseList.addAll(dbHelper.getExpensesByDateRange(start, end, userId))
         adapter.notifyDataSetChanged()
         val total = expenseList.sumOf { it.amount }
         totalView.text = "R %.2f".format(total)
@@ -105,8 +119,9 @@ class HistoryFragment : Fragment() {
         )
 
         try {
-            if (uri.scheme == "file") {
-                val file = File(uri.path)
+            if (uri.scheme == "file" || uri.scheme == null) {
+                val path = uri.path ?: expense.photoUri!!
+                val file = File(path)
                 if (file.exists()) {
                     val bitmap = BitmapFactory.decodeFile(file.absolutePath)
                     imageView.setImageBitmap(bitmap)
