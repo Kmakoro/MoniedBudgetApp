@@ -61,7 +61,6 @@ class AddExpenseActivity : AppCompatActivity() {
 
         databaseHelper = DatabaseHelper(this)
 
-        // Retrieve userId from SharedPreferences
         val prefs = getSharedPreferences("MoniedPrefs", Context.MODE_PRIVATE)
         userId = prefs.getInt("userId", -1)
 
@@ -82,13 +81,29 @@ class AddExpenseActivity : AppCompatActivity() {
         btnAddPhoto = findViewById(R.id.btnAddPhoto)
         ivReceiptPhoto = findViewById(R.id.ivReceiptPhoto)
 
+        if (savedInstanceState != null) {
+            savedInstanceState.getString("photoPath")?.let { currentPhotoPath = it }
+            currentPhotoUri = savedInstanceState.getParcelable("photoUri")
+            currentPhotoUri?.let {
+                ivReceiptPhoto.setImageURI(it)
+                ivReceiptPhoto.visibility = View.VISIBLE
+            }
+        }
+
         setupClickListeners()
         setupSpinner()
         checkPermissions()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (::currentPhotoPath.isInitialized) {
+            outState.putString("photoPath", currentPhotoPath)
+        }
+        outState.putParcelable("photoUri", currentPhotoUri)
+    }
+
     private fun setupSpinner() {
-        // Load categories only for the current user to ensure isolation
         categoryList = databaseHelper.getAllCategories(userId)
         if (categoryList.isEmpty()) {
             Toast.makeText(this, "Please add a category first in the Categories section.", Toast.LENGTH_LONG).show()
@@ -123,21 +138,23 @@ class AddExpenseActivity : AppCompatActivity() {
     }
 
     private fun dispatchTakePictureIntent() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            takePictureIntent.resolveActivity(packageManager)?.also {
-                val photoFile = try { createImageFile() } catch (ex: IOException) { null }
-                photoFile?.also {
-                    currentPhotoPath = it.absolutePath
-                    val photoURI = FileProvider.getUriForFile(this, "${packageName}.fileprovider", it)
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-                }
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (takePictureIntent.resolveActivity(packageManager) != null) {
+            val photoFile = try { createImageFile() } catch (ex: IOException) { null }
+            photoFile?.also {
+                currentPhotoPath = it.absolutePath
+                val photoURI = FileProvider.getUriForFile(this, "${packageName}.fileprovider", it)
+                currentPhotoUri = photoURI
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
             }
+        } else {
+            Toast.makeText(this, "No camera app found", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun createImageFile(): File {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
     }
@@ -153,21 +170,19 @@ class AddExpenseActivity : AppCompatActivity() {
         ivReceiptPhoto.visibility = View.GONE
     }
 
-    // In AddExpenseActivity.kt, update onActivityResult
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
             when (requestCode) {
                 REQUEST_IMAGE_CAPTURE -> {
-                    val file = File(currentPhotoPath)
-                    currentPhotoUri = Uri.fromFile(file)
-                    ivReceiptPhoto.setImageURI(currentPhotoUri)
-                    ivReceiptPhoto.visibility = View.VISIBLE
+                    currentPhotoUri?.let {
+                        ivReceiptPhoto.setImageURI(it)
+                        ivReceiptPhoto.visibility = View.VISIBLE
+                    }
                 }
                 REQUEST_GALLERY -> {
                     val selectedImageUri = data?.data
                     if (selectedImageUri != null) {
-                        // Copy to internal storage to persist access
                         currentPhotoUri = saveImageToInternalStorage(selectedImageUri)
                         ivReceiptPhoto.setImageURI(currentPhotoUri)
                         ivReceiptPhoto.visibility = View.VISIBLE
@@ -216,7 +231,6 @@ class AddExpenseActivity : AppCompatActivity() {
         val catId = categoryList[spinnerCategory.selectedItemPosition].id
         val photoUri = currentPhotoUri?.toString()
 
-        // Fixed: Passing userId as required by DatabaseHelper.addExpense
         val id = databaseHelper.addExpense(amount, desc, date, start, end, catId, userId, photoUri)
         if (id != -1L) {
             Toast.makeText(this, "Expense added successfully!", Toast.LENGTH_SHORT).show()
@@ -229,14 +243,14 @@ class AddExpenseActivity : AppCompatActivity() {
     private fun showDatePicker() {
         val c = Calendar.getInstance()
         DatePickerDialog(this, { _, y, m, d ->
-            etDate.setText(String.format(Locale.getDefault(), "%04d-%02d-%02d", y, m + 1, d))
+            etDate.setText(String.format(Locale.US, "%04d-%02d-%02d", y, m + 1, d))
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
     }
 
     private fun showTimePicker(target: TextInputEditText) {
         val c = Calendar.getInstance()
         TimePickerDialog(this, { _, h, m ->
-            target.setText(String.format(Locale.getDefault(), "%02d:%02d", h, m))
+            target.setText(String.format(Locale.US, "%02d:%02d", h, m))
         }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show()
     }
 }
