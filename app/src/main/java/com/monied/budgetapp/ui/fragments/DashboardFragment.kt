@@ -102,7 +102,8 @@ class DashboardFragment : Fragment() {
         if (userId == -1) return
 
         val calendar = Calendar.getInstance()
-        val currentMonth = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(calendar.time)
+        // Use Locale.US for database consistency
+        val currentMonth = SimpleDateFormat("yyyy-MM", Locale.US).format(calendar.time)
 
         // Load Budget Goals
         val budgetGoal = dbHelper.getBudgetGoal(currentMonth, userId)
@@ -131,7 +132,7 @@ class DashboardFragment : Fragment() {
         val alerts = dbHelper.getAlerts(userId)
         binding.tvAlertCount.text = "${alerts.size} New"
 
-        // Load Recent Expenses into the container
+        // Load Recent Expenses into the container - passing empty range to get all recent
         val expenses = dbHelper.getExpensesByDateRange("", "", userId)
         binding.expensesContainer.removeAllViews()
         
@@ -157,7 +158,7 @@ class DashboardFragment : Fragment() {
 
     private fun showSetBudgetDialog() {
         val calendar = Calendar.getInstance()
-        val currentMonth = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(calendar.time)
+        val currentMonth = SimpleDateFormat("yyyy-MM", Locale.US).format(calendar.time)
         val budgetGoal = dbHelper.getBudgetGoal(currentMonth, userId)
 
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_savings_goal, null)
