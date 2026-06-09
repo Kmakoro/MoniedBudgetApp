@@ -8,6 +8,7 @@
     <color name="completed_bg">#F1F8E9</color>
     <color name="urgent_bg">#FFF3E0</color>
     <color name="overdue_bg">#FFEBEE</color>
+
     <!-- Theme colors (Material Design) -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
@@ -21,21 +22,24 @@
     <color name="text_primary_light">#1F2937</color>
     <color name="text_secondary_light">#6B7280</color>
 
-    <!-- Dark theme (optional but add to avoid missing) -->
+    <!-- Dark theme -->
     <color name="background_dark">#121212</color>
     <color name="surface_dark">#1E1E1E</color>
     <color name="text_primary_dark">#FFFFFF</color>
     <color name="text_secondary_dark">#B0B0B0</color>
 
-    <!-- Brand colors (full range) -->
+    <!-- Brand colors -->
     <color name="emerald_400">#34D399</color>
     <color name="emerald_500">#10B981</color>
     <color name="emerald_600">#059669</color>
     <color name="emerald_700">#047857</color>
 
-    <!-- Grays (complete) -->
+    <!-- Grays (complete palette) -->
+    <color name="gray_50">#F9FAFB</color>
     <color name="gray_100">#F3F4F6</color>
     <color name="gray_200">#E5E7EB</color>
+    <color name="gray_300">#D1D5DB</color>
+    <color name="gray_400">#9CA3AF</color>
     <color name="gray_500">#6B7280</color>
     <color name="gray_600">#4B5563</color>
     <color name="gray_700">#374151</color>
@@ -44,7 +48,7 @@
 
     <!-- Reds -->
     <color name="red_100">#FEE2E2</color>
-    <color name="red_500">#EF4444</color>   <!-- ADDED for fragment_dashboard -->
+    <color name="red_500">#EF4444</color>
     <color name="red_600">#DC2626</color>
     <color name="red_800">#991B1B</color>
 
