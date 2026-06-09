@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="?attr/android:windowBackground">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -34,6 +35,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <!-- Trophy Button -->
+        <ImageView
+            android:id="@+id/ivTrophy"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/circle_background"
+            android:padding="8dp"
+            android:src="@drawable/ic_trophy"
+            app:tint="@color/white"
+            app:layout_constraintTop_toTopOf="@id/ivProfileAvatar"
+            app:layout_constraintBottom_toBottomOf="@id/ivProfileAvatar"
+            app:layout_constraintEnd_toStartOf="@id/ivProfileAvatar" />
+
         <!-- Profile Avatar -->
         <ImageView
             android:id="@+id/ivProfileAvatar"
@@ -44,6 +59,7 @@
             android:contentDescription="@string/cd_profile_avatar"
             android:padding="8dp"
             android:src="@drawable/ic_person"
+            app:tint="@color/white"
             app:layout_constraintTop_toTopOf="@id/tvAppTitle"
             app:layout_constraintBottom_toBottomOf="@id/tvAppTitle"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -71,7 +87,7 @@
                     android:id="@+id/tvCurrentMonth"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="March 2026 Spending"
+                    android:text="Current Month Spending"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_body"
                     android:layout_marginBottom="@dimen/spacing_xs" />
@@ -122,11 +138,20 @@
                     android:progressBackgroundTint="#4DFFFFFF"
                     tools:progress="62" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Tap for Detailed Insights"
+                    android:textColor="#E0E0E0"
+                    android:textSize="12sp"
+                    android:layout_gravity="center_horizontal"/>
+
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Quick Action Grid (Placeholder - implement with actual buttons) -->
+        <!-- Quick Action Grid (Placeholder) -->
         <LinearLayout
             android:id="@+id/quickActionGrid"
             android:layout_width="0dp"
@@ -146,7 +171,7 @@
                 android:layout_weight="1"
                 android:text="Quick Actions"
                 android:textSize="@dimen/text_caption"
-                android:textColor="@color/gray_500"
+                android:textColor="?attr/android:textColorSecondary"
                 android:gravity="center" />
 
         </LinearLayout>
@@ -174,6 +199,7 @@
                 android:textStyle="bold"
                 android:drawableStart="@drawable/ic_target"
                 android:drawablePadding="@dimen/spacing_xs"
+                app:drawableTint="@color/white"
                 android:gravity="center_vertical" />
 
         </com.google.android.material.card.MaterialCardView>
@@ -289,6 +315,7 @@
                 android:layout_weight="1"
                 android:text="@string/dashboard_recent_expenses"
                 android:textSize="@dimen/text_body_large"
+                android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold" />
 
             <TextView
@@ -301,18 +328,19 @@
 
         </LinearLayout>
 
-        <!-- Recent Expenses List (Placeholder - use RecyclerView in production) -->
+        <!-- Recent Expenses List -->
         <TextView
             android:id="@+id/tvNoExpenses"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_m"
             android:text="Recent expenses will appear here"
-            android:textColor="@color/gray_500"
+            android:textColor="?attr/android:textColorSecondary"
             android:textSize="@dimen/text_body"
             app:layout_constraintTop_toBottomOf="@id/recentExpensesHeader"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:paddingBottom="24dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
