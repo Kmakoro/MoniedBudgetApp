@@ -3,20 +3,13 @@ package com.monied.budgetapp.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.google.android.material.card.MaterialCardView
 import com.monied.budgetapp.R
 import com.monied.budgetapp.models.Expense
-
-
-
-import android.widget.ImageView
-
-
-import com.bumptech.glide.Glide
-
-
 
 class ExpenseAdapter(
     private var expenses: List<Expense>,
@@ -42,12 +35,12 @@ class ExpenseAdapter(
     }
 
     inner class ExpenseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val cvExpense: CardView = itemView.findViewById(R.id.cvExpense)
+        private val cvExpense: MaterialCardView = itemView.findViewById(R.id.cvExpense)
         private val tvAmount: TextView = itemView.findViewById(R.id.tvAmount)
         private val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
         private val tvCategory: TextView = itemView.findViewById(R.id.tvCategory)
         private val tvDateTime: TextView = itemView.findViewById(R.id.tvDateTime)
-        private val tvDelete: TextView = itemView.findViewById(R.id.tvDelete)
+        private val btnDelete: ImageView = itemView.findViewById(R.id.btnDelete)
         private val ivPhoto: ImageView = itemView.findViewById(R.id.ivPhoto)
         private val ivPhotoIcon: ImageView = itemView.findViewById(R.id.ivPhotoIcon)
 
@@ -73,7 +66,7 @@ class ExpenseAdapter(
             }
 
             cvExpense.setOnClickListener { onItemClick(expense) }
-            tvDelete.setOnClickListener { onDeleteClick(expense) }
+            btnDelete.setOnClickListener { onDeleteClick(expense) }
         }
     }
 }
