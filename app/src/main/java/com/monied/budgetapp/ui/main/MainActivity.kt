@@ -1,11 +1,8 @@
 package com.monied.budgetapp.ui.main
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.monied.budgetapp.R
 import com.monied.budgetapp.databinding.ActivityMainBinding
 import com.monied.budgetapp.ui.fragments.DashboardFragment
@@ -19,50 +16,46 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val bottomNav = binding.bottomNavigation
-        bottomNav.setOnItemSelectedListener { item ->
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_add -> {
-                    startActivity(Intent(this, AddExpenseActivity::class.java))
+                R.id.navigation_home -> {
+                    replaceFragment(DashboardFragment())
                     true
                 }
                 R.id.navigation_history -> {
-                    startActivity(Intent(this, ViewExpensesActivity::class.java))
+                    replaceFragment(HistoryFragment())
                     true
                 }
-                R.id.navigation_category -> {
-                    startActivity(Intent(this, CategoryActivity::class.java))
+                R.id.navigation_add -> {
+                    // Navigate to Add Expense - using Fragment now to keep Nav Bar
+                    replaceFragment(AddExpenseFragment()) 
                     true
                 }
-                R.id.navigation_spending_goals -> {
-                    startActivity(Intent(this, SavingsGoalActivity::class.java))
+                R.id.navigation_analytics -> {
+                    replaceFragment(AnalyticsFragment())
                     true
                 }
-
-                R.id.navigation_report -> {
-                    val intent = Intent(this, SpendingReportActivity::class.java)
-                    startActivity(intent)
+                R.id.navigation_profile -> {
+                    replaceFragment(ProfileFragment())
                     true
                 }
                 else -> false
             }
         }
+
         // Default fragment when MainActivity opens
         if (savedInstanceState == null) {
-            replaceFragment(DashboardFragment(), false)
+            binding.bottomNavigation.selectedItemId = R.id.navigation_home
         }
     }
 
-    private fun replaceFragment(fragment: Fragment, addToBackStack: Boolean = false) {
-        val transaction = supportFragmentManager.beginTransaction()
+    private fun replaceFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
-        if (addToBackStack) {
-            transaction.addToBackStack(null)
-        }
-        transaction.commit()
+            .commit()
     }
 
     fun openProfile() {
-        replaceFragment(ProfileFragment(), true)
+        binding.bottomNavigation.selectedItemId = R.id.navigation_profile
     }
 }
