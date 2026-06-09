@@ -3,31 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F9FAFB"
+    android:background="?attr/android:windowBackground"
     android:orientation="vertical">
-<!-- page header -->
+    <!-- page header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#059669"
+        android:background="@color/emerald_600"
         android:orientation="horizontal"
         android:padding="16dp"
         android:gravity="center_vertical">
-<!--back button-->
+        <!--back button-->
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_revert"
-            app:tint="#FFFFFF" />
-<!--add expense page title -->
+            android:src="@drawable/ic_back"
+            app:tint="@color/white" />
+        <!--add expense page title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="@string/add_expense"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -42,23 +42,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-<!--amount input -->
+            <!--amount input -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/amount_zar"
-                android:textColor="#374151"
+                android:textColor="?attr/colorOnSurface"
                 android:layout_marginBottom="4dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.Monied.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:startIconDrawable="@android:drawable/ic_input_add"
                 android:layout_marginBottom="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -66,14 +61,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
+                    android:textColor="?attr/colorOnSurface"
                     android:hint="@string/_0_00" />
             </com.google.android.material.textfield.TextInputLayout>
-<!--category dropdown/spinner-->
+            <!--category dropdown/spinner-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/category"
-                android:textColor="#374151"
+                android:textColor="?attr/colorOnSurface"
                 android:layout_marginBottom="4dp"/>
 
             <Spinner
@@ -82,23 +78,18 @@
                 android:layout_height="56dp"
                 android:background="@android:drawable/btn_dropdown"
                 android:layout_marginBottom="16dp" />
-<!--date input/selector-->
+            <!--date input/selector-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/date"
-                android:textColor="#374151"
+                android:textColor="?attr/colorOnSurface"
                 android:layout_marginBottom="4dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.Monied.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
                 android:layout_marginBottom="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -107,16 +98,17 @@
                     android:layout_height="wrap_content"
                     android:focusable="false"
                     android:clickable="true"
+                    android:textColor="?attr/colorOnSurface"
                     android:hint="@string/select_date" />
             </com.google.android.material.textfield.TextInputLayout>
-<!--time -->
+            <!--time -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:baselineAligned="false"
                 android:layout_marginBottom="16dp">
-<!--start time -->
+                <!--start time -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -128,18 +120,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/start_time"
-                        android:textColor="#374151"
+                        android:textColor="?attr/colorOnSurface"
                         android:layout_marginBottom="4dp"/>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.Monied.TextInputLayout"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:startIconDrawable="@android:drawable/ic_menu_recent_history">
+                        android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etStartTime"
@@ -147,10 +134,11 @@
                             android:layout_height="wrap_content"
                             android:focusable="false"
                             android:clickable="true"
+                            android:textColor="?attr/colorOnSurface"
                             android:hint="@string/_14_00" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
-<!--end time-->
+                <!--end time-->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -162,18 +150,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/end_time"
-                        android:textColor="#374151"
+                        android:textColor="?attr/colorOnSurface"
                         android:layout_marginBottom="4dp"/>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.Monied.TextInputLayout"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:startIconDrawable="@android:drawable/ic_menu_recent_history">
+                        android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etEndTime"
@@ -181,26 +164,23 @@
                             android:layout_height="wrap_content"
                             android:focusable="false"
                             android:clickable="true"
+                            android:textColor="?attr/colorOnSurface"
                             android:hint="@string/_16_00" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </LinearLayout>
-<!--description input-->
+            <!--description input-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/description"
-                android:textColor="#374151"
+                android:textColor="?attr/colorOnSurface"
                 android:layout_marginBottom="4dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.Monied.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
                 android:layout_marginBottom="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -209,28 +189,23 @@
                     android:layout_height="wrap_content"
                     android:lines="3"
                     android:gravity="top"
+                    android:textColor="?attr/colorOnSurface"
                     android:hint="@string/add_notes_about_this_expense" />
             </com.google.android.material.textfield.TextInputLayout>
-<!--photo-->
+            <!--photo-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/receipt_photo_optional"
-                android:textColor="#374151"
+                android:textColor="?attr/colorOnSurface"
                 android:layout_marginBottom="8dp"/>
 
             <Button
                 android:id="@+id/btnAddPhoto"
-                style="?attr/materialButtonOutlinedStyle"
+                style="@style/Widget.Monied.Button.Outlined"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:text="@string/take_photo_or_choose_from_gallery"
-                android:textColor="#6B7280"
-                app:strokeColor="#D1D5DB"
-                app:cornerRadius="12dp"
-                app:icon="@android:drawable/ic_menu_camera"
-                app:iconTint="#6B7280"
-                app:iconGravity="top"
                 android:layout_marginBottom="16dp"/>
 
             <ImageView
@@ -241,15 +216,14 @@
                 android:visibility="gone"
                 android:layout_marginBottom="16dp" />
 
-<!--save expense btn            -->
-            <com.google.android.material.button.MaterialButton
+            <!--save expense btn            -->
+            <Button
                 android:id="@+id/btnSaveExpense"
+                style="@style/Widget.Monied.Button"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:text="@string/save_expense"
                 android:textSize="16sp"
-                app:cornerRadius="12dp"
-                app:backgroundTint="#059669"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="32dp"/>
 
