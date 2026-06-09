@@ -1,9 +1,11 @@
 package com.monied.budgetapp.ui.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,12 +20,16 @@ class CategoryExpensesActivity : AppCompatActivity() {
     private lateinit var tvCategoryTitle: TextView
     private lateinit var btnBack: ImageButton
     private lateinit var tvEmptyState: TextView
+    private var userId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category_expenses)
 
         databaseHelper = DatabaseHelper(this)
+
+        val prefs = getSharedPreferences("MoniedPrefs", Context.MODE_PRIVATE)
+        userId = prefs.getInt("userId", -1)
 
         // 1. Find views
         rvCategoryExpenses = findViewById(R.id.rvCategoryExpenses)
@@ -40,12 +46,17 @@ class CategoryExpensesActivity : AppCompatActivity() {
         btnBack.setOnClickListener { finish() }
 
         // 4. Load the data
-        loadExpenses(categoryId)
+        if (userId != -1) {
+            loadExpenses(categoryId)
+        } else {
+            Toast.makeText(this, "User session error", Toast.LENGTH_SHORT).show()
+            finish()
+        }
     }
 
     private fun loadExpenses(categoryId: Int) {
-        // Ask the database for expenses matching this specific ID
-        val expenses = databaseHelper.getExpensesByCategory(categoryId)
+        // Ask the database for expenses matching this specific ID and user
+        val expenses = databaseHelper.getExpensesByCategory(categoryId, userId)
 
         if (expenses.isEmpty()) {
             // Show the "No expenses found" text and hide the list
@@ -56,16 +67,17 @@ class CategoryExpensesActivity : AppCompatActivity() {
             tvEmptyState.visibility = View.GONE
             rvCategoryExpenses.visibility = View.VISIBLE
 
-            // --- USE YOUR CUSTOM ADAPTER HERE ---
             val adapter = ExpenseAdapter(
                 expenses = expenses,
                 onItemClick = { clickedExpense ->
-                    // For now, let's just show a Toast when they click the card
-                    android.widget.Toast.makeText(this, "Clicked: ${clickedExpense.description}", android.widget.Toast.LENGTH_SHORT).show()
+                    // Navigation to details or show a bottom sheet could be added here
+                    Toast.makeText(this, "Details for: ${clickedExpense.description}", Toast.LENGTH_SHORT).show()
                 },
                 onDeleteClick = { clickedExpense ->
-                    // If you uncomment the delete button in your adapter later,
-                    // you can add the database delete logic here!
+                    // Add delete logic here
+                    databaseHelper.deleteExpense(clickedExpense.id)
+                    loadExpenses(categoryId)
+                    Toast.makeText(this, "Expense deleted", Toast.LENGTH_SHORT).show()
                 }
             )
 
