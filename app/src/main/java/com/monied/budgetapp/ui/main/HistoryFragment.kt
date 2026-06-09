@@ -1,35 +1,42 @@
 package com.monied.budgetapp.ui.main
 
-import android.app.DatePickerDialog
+import android.app.Dialog
 import android.content.Context
-import android.graphics.BitmapFactory
-import android.net.Uri
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.textfield.TextInputEditText
+import com.bumptech.glide.Glide
 import com.monied.budgetapp.R
+import com.monied.budgetapp.adapters.ExpenseAdapter
 import com.monied.budgetapp.data.DatabaseHelper
+import com.monied.budgetapp.dialog.DateRangePickerDialog
 import com.monied.budgetapp.models.Expense
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
 class HistoryFragment : Fragment() {
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: ExpenseAdapter
     private lateinit var dbHelper: DatabaseHelper
-    private lateinit var adapter: ExpenseHistoryAdapter
-    private val expenseList = mutableListOf<Expense>()
+    private lateinit var btnSelectDate: Button
+    private lateinit var tvDateRange: TextView
+    private lateinit var tvTotalAmount: TextView
+    private lateinit var tvTotalCount: TextView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var tvNoData: TextView
+
+    private val expensesList = mutableListOf<Expense>()
+    private var currentStartDate = ""
+    private var currentEndDate = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_history, container, false)
@@ -38,144 +45,249 @@ class HistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dbHelper = DatabaseHelper(requireContext())
+        initViews(view)
+        setupRecyclerView()
 
-        val rvExpenses = view.findViewById<RecyclerView>(R.id.rvExpenses)
-        rvExpenses.layoutManager = LinearLayoutManager(requireContext())
-        adapter = ExpenseHistoryAdapter(expenseList,
-            onItemClick = { expense -> showExpenseDetails(expense) },      // Click on whole item
-            onPhotoClick = { expense -> showPhotoDialog(expense) }        // Click on photo button
-        )
-        rvExpenses.adapter = adapter
+        // Load default period (last 30 days)
+        loadDefaultPeriod()
 
-        val etStartDate = view.findViewById<TextInputEditText>(R.id.etStartDate)
-        val etEndDate = view.findViewById<TextInputEditText>(R.id.etEndDate)
-        val btnFilter = view.findViewById<Button>(R.id.btnFilter)
-        val tvTotalAmount = view.findViewById<TextView>(R.id.tvTotalAmount)
-        val tvCount = view.findViewById<TextView>(R.id.tvCount)
-
-        etStartDate.setOnClickListener { showDatePicker(etStartDate) }
-        etEndDate.setOnClickListener { showDatePicker(etEndDate) }
-
-        btnFilter.setOnClickListener {
-            loadExpenses(etStartDate.text.toString(), etEndDate.text.toString(), tvTotalAmount, tvCount)
+        btnSelectDate.setOnClickListener {
+            showDateRangePicker()
         }
-
-        // Use yyyy-MM-dd format to match DatabaseHelper and AddExpenseActivity
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val cal = Calendar.getInstance()
-        etEndDate.setText(dateFormat.format(cal.time))
-        cal.add(Calendar.DAY_OF_MONTH, -10)
-        etStartDate.setText(dateFormat.format(cal.time))
-        loadExpenses(etStartDate.text.toString(), etEndDate.text.toString(), tvTotalAmount, tvCount)
     }
 
-    private fun showDatePicker(editText: TextInputEditText) {
-        val c = Calendar.getInstance()
-        DatePickerDialog(requireContext(), { _, year, month, day ->
-            // Use consistent yyyy-MM-dd format
-            val formattedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, day)
-            editText.setText(formattedDate)
-        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
+    private fun initViews(view: View) {
+        recyclerView = view.findViewById(R.id.recyclerViewExpenses)
+        btnSelectDate = view.findViewById(R.id.btnSelectDate)
+        tvDateRange = view.findViewById(R.id.tvDateRange)
+        tvTotalAmount = view.findViewById(R.id.tvTotalAmount)
+        tvTotalCount = view.findViewById(R.id.tvTotalCount)
+        progressBar = view.findViewById(R.id.progressBar)
+        tvNoData = view.findViewById(R.id.tvNoData)
     }
 
-    private fun loadExpenses(start: String, end: String, totalView: TextView, countView: TextView) {
-        val prefs = requireContext().getSharedPreferences("MoniedPrefs", Context.MODE_PRIVATE)
+    private fun setupRecyclerView() {
+        adapter = ExpenseAdapter(
+            expenses = expensesList,
+            onItemClick = { expense -> showExpenseDetails(expense) },
+            onDeleteClick = { expense -> confirmDeleteExpense(expense) }
+        )
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
+    }
+
+    private fun loadDefaultPeriod() {
+        val calendar = Calendar.getInstance()
+        val endDate = String.format(Locale.getDefault(), "%04d-%02d-%02d",
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH) + 1,
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+
+        calendar.add(Calendar.MONTH, -1)
+        val startDate = String.format(Locale.getDefault(), "%04d-%02d-%02d",
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH) + 1,
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+
+        loadExpenses(startDate, endDate)
+    }
+
+    private fun showDateRangePicker() {
+        val dialog = DateRangePickerDialog.newInstance { startDate, endDate ->
+            loadExpenses(startDate, endDate)
+        }
+        dialog.show(parentFragmentManager, "DateRangePicker")
+    }
+
+    private fun loadExpenses(startDate: String, endDate: String) {
+        val context = context ?: return
+        val prefs = context.getSharedPreferences("MoniedPrefs", Context.MODE_PRIVATE)
         val userId = prefs.getInt("userId", -1)
 
-        expenseList.clear()
-        expenseList.addAll(dbHelper.getExpensesByDateRange(start, end, userId))
-        adapter.notifyDataSetChanged()
-        val total = expenseList.sumOf { it.amount }
-        totalView.text = "R %.2f".format(total)
-        countView.text = expenseList.size.toString()
-    }
-
-    private fun showExpenseDetails(expense: Expense) {
-        AlertDialog.Builder(requireContext())
-            .setTitle(expense.description)
-            .setMessage("Amount: R ${expense.amount}\nDate: ${expense.date}\nTime: ${expense.startTime} - ${expense.endTime}\nCategory: ${expense.categoryName}")
-            .setPositiveButton("OK", null)
-            .show()
-    }
-
-    private fun showPhotoDialog(expense: Expense) {
-        if (expense.photoUri.isNullOrEmpty()) {
-            Toast.makeText(requireContext(), "No photo attached", Toast.LENGTH_SHORT).show()
+        if (userId == -1) {
+            Toast.makeText(context, "Please login again", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val uri = Uri.parse(expense.photoUri)
-        val imageView = ImageView(requireContext())
-        imageView.scaleType = ImageView.ScaleType.CENTER_INSIDE
-        imageView.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        currentStartDate = startDate
+        currentEndDate = endDate
 
-        try {
-            if (uri.scheme == "file" || uri.scheme == null) {
-                val path = uri.path ?: expense.photoUri!!
-                val file = File(path)
-                if (file.exists()) {
-                    val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                    imageView.setImageBitmap(bitmap)
-                } else {
-                    imageView.setImageResource(android.R.drawable.ic_menu_gallery)
-                    Toast.makeText(requireContext(), "Image file not found", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                imageView.setImageURI(uri)
+        showLoading(true)
+
+        // Update date range display
+        tvDateRange.text = formatDateRange(startDate, endDate)
+
+        // Load expenses from database
+        val expenses = dbHelper.getExpensesByDateRange(startDate, endDate, userId)
+        expensesList.clear()
+        expensesList.addAll(expenses)
+        adapter.updateData(expensesList)
+
+        // Update summary
+        updateSummary(expenses)
+
+        showLoading(false)
+
+        // Show/hide no data message
+        tvNoData.visibility = if (expensesList.isEmpty()) View.VISIBLE else View.GONE
+    }
+
+    private fun updateSummary(expenses: List<Expense>) {
+        val totalCount = expenses.size
+        val totalAmount = expenses.sumOf { it.amount }
+
+        tvTotalCount.text = String.format(Locale.getDefault(), "Total Expenses: %d", totalCount)
+        tvTotalAmount.text = String.format(Locale.getDefault(), "Total Amount: R%.2f", totalAmount)
+    }
+
+    private fun showExpenseDetails(expense: Expense) {
+        val context = context ?: return
+        val dialog = Dialog(context)
+        dialog.setContentView(R.layout.dialog_expense_details)
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
+        val tvAmount = dialog.findViewById<TextView>(R.id.tvDetailAmount)
+        val tvDescription = dialog.findViewById<TextView>(R.id.tvDetailDescription)
+        val tvCategory = dialog.findViewById<TextView>(R.id.tvDetailCategory)
+        val tvDate = dialog.findViewById<TextView>(R.id.tvDetailDate)
+        val tvTime = dialog.findViewById<TextView>(R.id.tvDetailTime)
+        val tvDuration = dialog.findViewById<TextView>(R.id.tvDetailDuration)
+        val ivPhoto = dialog.findViewById<ImageView>(R.id.ivDetailPhoto)
+        val btnDelete = dialog.findViewById<View>(R.id.btnDetailDelete)
+        val btnClose = dialog.findViewById<View>(R.id.btnDetailClose)
+        val emptyPhotoView = dialog.findViewById<View>(R.id.tvNoImage)
+
+        tvAmount.text = expense.formattedAmount
+        tvDescription.text = expense.description
+        tvCategory.text = expense.categoryName
+        tvDate.text = formatDisplayDate(expense.date)
+        tvTime.text = String.format(Locale.getDefault(), "%s - %s", expense.startTime, expense.endTime)
+        tvDuration.text = calculateDuration(expense.startTime, expense.endTime)
+
+        if (!expense.photoUri.isNullOrEmpty()) {
+            Glide.with(this)
+                .load(expense.photoUri)
+                .fitCenter()
+                .error(R.drawable.ic_image_error)
+                .into(ivPhoto)
+            ivPhoto.visibility = View.VISIBLE
+            emptyPhotoView?.visibility = View.GONE
+
+            ivPhoto.setOnClickListener {
+                showFullscreenImage(expense.photoUri)
             }
-        } catch (e: Exception) {
-            imageView.setImageResource(android.R.drawable.ic_menu_gallery)
-            Toast.makeText(requireContext(), "Cannot load image", Toast.LENGTH_SHORT).show()
+        } else {
+            ivPhoto.visibility = View.GONE
+            emptyPhotoView?.visibility = View.VISIBLE
         }
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("Receipt Photo")
-            .setView(imageView)
-            .setPositiveButton("Close") { d, _ -> d.dismiss() }
+        btnDelete.setOnClickListener {
+            dialog.dismiss()
+            confirmDeleteExpense(expense)
+        }
+
+        btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun showFullscreenImage(imageUri: String?) {
+        val context = context ?: return
+        if (imageUri.isNullOrEmpty()) return
+
+        val dialog = Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+        dialog.setContentView(R.layout.dialog_fullscreen_image)
+
+        val ivFullscreen = dialog.findViewById<ImageView>(R.id.ivFullscreenImage)
+        val btnClose = dialog.findViewById<Button>(R.id.btnCloseFullscreen)
+
+        Glide.with(this)
+            .load(imageUri)
+            .fitCenter()
+            .into(ivFullscreen)
+
+        btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        ivFullscreen.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun confirmDeleteExpense(expense: Expense) {
+        val context = context ?: return
+        AlertDialog.Builder(context)
+            .setTitle("Delete Expense")
+            .setMessage(String.format(Locale.getDefault(), "Delete %s - %s?", expense.description, expense.formattedAmount))
+            .setPositiveButton("Delete") { _, _ ->
+                dbHelper.deleteExpense(expense.id)
+                loadExpenses(currentStartDate, currentEndDate)
+                Toast.makeText(context, "Expense deleted", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
             .show()
     }
-}
 
-class ExpenseHistoryAdapter(
-    private val list: List<Expense>,
-    private val onItemClick: (Expense) -> Unit,
-    private val onPhotoClick: (Expense) -> Unit
-) : RecyclerView.Adapter<ExpenseHistoryAdapter.ViewHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_expense_history, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val expense = list[position]
-        holder.tvCategory.text = expense.categoryName
-        holder.tvDesc.text = expense.description
-        holder.tvAmount.text = "R %.2f".format(expense.amount)
-        holder.tvDateTime.text = "${expense.date} • ${expense.startTime} - ${expense.endTime}"
-
-        // Whole item click shows details
-        holder.itemView.setOnClickListener { onItemClick(expense) }
-
-        // Photo button click shows photo (only if photo exists)
-        if (!expense.photoUri.isNullOrEmpty()) {
-            holder.btnViewPhoto.visibility = View.VISIBLE
-            holder.btnViewPhoto.setOnClickListener { onPhotoClick(expense) }
-        } else {
-            holder.btnViewPhoto.visibility = View.GONE
+    private fun formatDateRange(startDate: String, endDate: String): String {
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+            val start = inputFormat.parse(startDate)
+            val end = inputFormat.parse(endDate)
+            if (start != null && end != null) {
+                String.format(Locale.getDefault(), "%s - %s", outputFormat.format(start), outputFormat.format(end))
+            } else {
+                String.format(Locale.getDefault(), "%s to %s", startDate, endDate)
+            }
+        } catch (e: Exception) {
+            String.format(Locale.getDefault(), "%s to %s", startDate, endDate)
         }
     }
 
-    override fun getItemCount() = list.size
+    private fun formatDisplayDate(dateString: String): String {
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.getDefault())
+            val date = inputFormat.parse(dateString)
+            if (date != null) outputFormat.format(date) else dateString
+        } catch (e: Exception) {
+            dateString
+        }
+    }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvCategory: TextView = itemView.findViewById(R.id.tvCategoryName)
-        val tvDesc: TextView = itemView.findViewById(R.id.tvDescription)
-        val tvAmount: TextView = itemView.findViewById(R.id.tvAmount)
-        val tvDateTime: TextView = itemView.findViewById(R.id.tvDateTime)
-        val btnViewPhoto: Button = itemView.findViewById(R.id.btnViewPhoto)
+    private fun calculateDuration(startTime: String, endTime: String): String {
+        return try {
+            val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val start = timeFormat.parse(startTime)
+            val end = timeFormat.parse(endTime)
+            if (start != null && end != null) {
+                val durationMillis = end.time - start.time
+                val hours = durationMillis / (1000 * 60 * 60)
+                val minutes = (durationMillis % (1000 * 60 * 60)) / (1000 * 60)
+                when {
+                    hours > 0 && minutes > 0 -> String.format(Locale.getDefault(), "%dh %dm", hours, minutes)
+                    hours > 0 -> String.format(Locale.getDefault(), "%dh", hours)
+                    minutes > 0 -> String.format(Locale.getDefault(), "%dm", minutes)
+                    else -> "0m"
+                }
+            } else ""
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
+    private fun showLoading(show: Boolean) {
+        progressBar.visibility = if (show) View.VISIBLE else View.GONE
+        recyclerView.visibility = if (show) View.GONE else View.VISIBLE
+        tvNoData.visibility = View.GONE
     }
 }
