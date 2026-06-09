@@ -102,16 +102,16 @@ class DateRangePickerDialog : DialogFragment() {
                     updateDateDisplay(tvStartDate, startDate)
                     updateDateDisplay(tvEndDate, endDate)
                 }
-               /* R.id.radioLastMonth -> {
-                    val calendar = Calendar.getInstance()
-                    calendar.add(Calendar.MONTH, -1)
-                    calendar.set(Calendar.DAY_OF_MONTH, 1)
-                    startDate = formatDate(calendar)
-                    calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
-                    endDate = formatDate(calendar)
-                    updateDateDisplay(tvStartDate, startDate)
-                    updateDateDisplay(tvEndDate, endDate)
-                }*/
+                /* R.id.radioLastMonth -> {
+                     val calendar = Calendar.getInstance()
+                     calendar.add(Calendar.MONTH, -1)
+                     calendar.set(Calendar.DAY_OF_MONTH, 1)
+                     startDate = formatDate(calendar)
+                     calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+                     endDate = formatDate(calendar)
+                     updateDateDisplay(tvStartDate, startDate)
+                     updateDateDisplay(tvEndDate, endDate)
+                 }*/
                 R.id.radioLast30Days -> {
                     val calendar = Calendar.getInstance()
                     calendar.add(Calendar.DAY_OF_MONTH, -30)
