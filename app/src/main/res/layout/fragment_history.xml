@@ -4,22 +4,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F9FAFB">
+    android:background="?attr/android:windowBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/emerald_600"
         android:padding="16dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_back"
+            app:tint="@color/white"
+            android:contentDescription="@string/cd_back_button" />
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Expense History"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:text="Expense History"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
@@ -29,7 +41,7 @@
         android:padding="16dp">
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/Widget.Monied.TextInputLayout"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
@@ -40,11 +52,11 @@
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:clickable="true"
-                android:text="2026/03/01" />
+                android:textColor="?attr/colorOnSurface" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/Widget.Monied.TextInputLayout"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:hint="To Date">
@@ -54,13 +66,15 @@
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:clickable="true"
-                android:text="2026/03/11" />
+                android:textColor="?attr/colorOnSurface" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/btnFilter"
+            style="@style/Widget.Monied.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:text="Go" />
     </LinearLayout>
 
@@ -73,32 +87,36 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Total Expenses:"
-        android:textSize="16sp" />
+            android:layout_weight="1"
+            android:text="Total Expenses:"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tvTotalAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-        android:text="R 0.00"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+            android:text="R 0.00"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Count:"
-        android:textSize="16sp" />
+            android:layout_marginStart="16dp"
+            android:text="Count:"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tvCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-        android:text="0"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+            android:text="0"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="16sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
