@@ -6,19 +6,18 @@
     android:orientation="vertical"
     android:background="?attr/android:windowBackground">
 
+    <!-- Header (No back button for bottom navigation tab) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/emerald_600"
+        android:orientation="horizontal"
         android:padding="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:gravity="center_vertical">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="16dp"
             android:text="Expense History"
             android:textColor="@color/white"
             android:textSize="20sp"
@@ -27,96 +26,110 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:padding="16dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Monied.TextInputLayout"
-            android:layout_width="0dp"
+        <!-- Date Selection Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:hint="From Date">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etStartDate"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="?attr/colorSurface">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="false"
-                android:clickable="true"
-                android:textColor="?attr/colorOnSurface" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical"
+                android:padding="12dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Monied.TextInputLayout"
-            android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/tvDateRange"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select date range"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnSelectDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Select Date Range"
+                    style="@style/Widget.Monied.Button.Outlined" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Summary Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="To Date">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etEndDate"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="?attr/colorSurface">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="false"
-                android:clickable="true"
-                android:textColor="?attr/colorOnSurface" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="horizontal"
+                android:padding="12dp">
 
-        <Button
-            android:id="@+id/btnFilter"
-            style="@style/Widget.Monied.Button"
+                <TextView
+                    android:id="@+id/tvTotalCount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Total: 0"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvTotalAmount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="R0.00"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/red_600" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Go" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:layout_marginBottom="8dp">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Total Expenses:"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="16sp" />
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
         <TextView
-            android:id="@+id/tvTotalAmount"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvNoData"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="R 0.00"
-            android:textColor="?attr/colorOnSurface"
+            android:text="No expenses found for this period"
+            android:textAlignment="center"
+            android:textColor="?attr/android:textColorSecondary"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:visibility="gone"
+            android:layout_marginTop="32dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Count:"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="16sp" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewExpenses"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp" />
 
-        <TextView
-            android:id="@+id/tvCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="16sp"
-            android:textStyle="bold" />
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvExpenses"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp" />
 </LinearLayout>
