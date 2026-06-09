@@ -1,10 +1,13 @@
 package com.monied.budgetapp.ui.main
 
+import android.Manifest
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -15,6 +18,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
@@ -40,12 +44,18 @@ class AddExpenseFragment : Fragment() {
     private var currentPhotoUri: Uri? = null
     private var currentPhotoPath: String? = null
 
-    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == AppCompatActivity.RESULT_OK) {
-            currentPhotoPath?.let {
-                val file = File(it)
-                currentPhotoUri = Uri.fromFile(file)
-                binding.ivReceiptPhoto.setImageURI(currentPhotoUri)
+    private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (isGranted) {
+            dispatchTakePictureIntent()
+        } else {
+            Toast.makeText(requireContext(), "Camera permission is required to take photos", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            currentPhotoUri?.let {
+                binding.ivReceiptPhoto.setImageURI(it)
                 binding.ivReceiptPhoto.visibility = View.VISIBLE
             }
         }
@@ -73,11 +83,35 @@ class AddExpenseFragment : Fragment() {
         val prefs = requireContext().getSharedPreferences("MoniedPrefs", Context.MODE_PRIVATE)
         userId = prefs.getInt("userId", -1)
 
+        if (savedInstanceState != null) {
+            currentPhotoUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                savedInstanceState.getParcelable("currentPhotoUri", Uri::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                savedInstanceState.getParcelable("currentPhotoUri")
+            }
+            currentPhotoPath = savedInstanceState.getString("currentPhotoPath")
+            
+            currentPhotoUri?.let {
+                binding.ivReceiptPhoto.setImageURI(it)
+                binding.ivReceiptPhoto.visibility = View.VISIBLE
+            }
+        }
+
         setupClickListeners()
         setupSpinner()
         
-        // Hide back button if we are in main navigation
         binding.btnBack.visibility = View.GONE
+
+        // Set current date as default
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        binding.etDate.setText(sdf.format(Date()))
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        currentPhotoUri?.let { outState.putParcelable("currentPhotoUri", it) }
+        currentPhotoPath?.let { outState.putString("currentPhotoPath", it) }
     }
 
     private fun setupSpinner() {
@@ -102,7 +136,7 @@ class AddExpenseFragment : Fragment() {
             .setTitle("Add Receipt Photo")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> dispatchTakePictureIntent()
+                    0 -> checkCameraPermissionAndTake()
                     1 -> openGallery()
                     2 -> removePhoto()
                 }
@@ -110,20 +144,26 @@ class AddExpenseFragment : Fragment() {
             .show()
     }
 
+    private fun checkCameraPermissionAndTake() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            dispatchTakePictureIntent()
+        } else {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
     private fun dispatchTakePictureIntent() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            val photoFile = try { createImageFile() } catch (ex: IOException) { null }
-            photoFile?.also {
-                currentPhotoPath = it.absolutePath
-                val photoURI = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", it)
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                takePictureLauncher.launch(takePictureIntent)
-            }
+        val photoFile = try { createImageFile() } catch (ex: IOException) { null }
+        photoFile?.also {
+            currentPhotoPath = it.absolutePath
+            val photoURI = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", it)
+            currentPhotoUri = photoURI
+            takePictureLauncher.launch(photoURI)
         }
     }
 
     private fun createImageFile(): File {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
     }
@@ -156,7 +196,8 @@ class AddExpenseFragment : Fragment() {
     }
 
     private fun saveExpense() {
-        val amount = binding.etAmount.text.toString().toDoubleOrNull()
+        val amountStr = binding.etAmount.text.toString()
+        val amount = amountStr.toDoubleOrNull()
         val desc = binding.etDescription.text.toString().trim()
         val date = binding.etDate.text.toString().trim()
         val start = binding.etStartTime.text.toString().trim()
@@ -172,24 +213,29 @@ class AddExpenseFragment : Fragment() {
 
         val id = databaseHelper.addExpense(amount, desc, date, start, end, catId, userId, photoUri)
         if (id != -1L) {
-            Toast.makeText(requireContext(), "Expense added!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Expense added successfully!", Toast.LENGTH_SHORT).show()
             binding.etAmount.text?.clear()
             binding.etDescription.text?.clear()
             removePhoto()
+            
+            // Navigate back to Home tab to show updated spending
+            (activity as? MainActivity)?.openHome()
+        } else {
+            Toast.makeText(requireContext(), "Failed to save expense", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun showDatePicker() {
         val c = Calendar.getInstance()
         DatePickerDialog(requireContext(), { _, y, m, d ->
-            binding.etDate.setText(String.format(Locale.getDefault(), "%04d-%02d-%02d", y, m + 1, d))
+            binding.etDate.setText(String.format(Locale.US, "%04d-%02d-%02d", y, m + 1, d))
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
     }
 
     private fun showTimePicker(target: TextInputEditText) {
         val c = Calendar.getInstance()
         TimePickerDialog(requireContext(), { _, h, m ->
-            target.setText(String.format(Locale.getDefault(), "%02d:%02d", h, m))
+            target.setText(String.format(Locale.US, "%02d:%02d", h, m))
         }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show()
     }
 
