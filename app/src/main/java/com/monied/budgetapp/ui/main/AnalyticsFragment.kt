@@ -62,11 +62,6 @@ class AnalyticsFragment : Fragment() {
         val btnGo = view.findViewById<Button>(R.id.btnAnalyticsGo)
         val tvTotal = view.findViewById<TextView>(R.id.tvAnalyticsTotal)
         val tvInsights = view.findViewById<TextView>(R.id.tvInsights)
-        val btnBack = view.findViewById<ImageButton>(R.id.btnBack)
-
-        btnBack.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
 
         etStart.setOnClickListener { showDatePicker(etStart) }
         etEnd.setOnClickListener { showDatePicker(etEnd) }
