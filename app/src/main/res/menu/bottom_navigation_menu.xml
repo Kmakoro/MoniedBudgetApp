@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/navigation_add"
-        android:icon="@drawable/ic_add"
-        android:title="@string/nav_add" />
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_category"
+        android:title="Home" />
 
     <item
         android:id="@+id/navigation_history"
         android:icon="@drawable/ic_history"
-        android:title="@string/nav_history" />
+        android:title="History" />
 
     <item
-        android:id="@+id/navigation_category"
-        android:icon="@drawable/ic_category"
-        android:title="@string/nav_category" />
+        android:id="@+id/navigation_add"
+        android:icon="@drawable/ic_add"
+        android:title="Add" />
 
     <item
-        android:id="@+id/navigation_spending_goals"
-        android:icon="@drawable/ic_target"
-        android:title="@string/goals" />
-    <item
-        android:id="@+id/navigation_report"
+        android:id="@+id/navigation_analytics"
         android:icon="@drawable/ic_analytics"
-        android:title="Report" />
+        android:title="Analytics" />
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/ic_person"
+        android:title="Profile" />
 </menu>
