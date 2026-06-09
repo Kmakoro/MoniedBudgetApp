@@ -3,7 +3,6 @@ package com.monied.budgetapp.ui.main
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.components.LimitLine
@@ -28,7 +27,6 @@ class SpendingInsightsActivity : AppCompatActivity() {
     private lateinit var gamificationManager: GamificationManager
     private var userId: Int = -1
 
-    //Override onCreate to set up the activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySpendingInsightsBinding.inflate(layoutInflater)
@@ -49,7 +47,6 @@ class SpendingInsightsActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Refresh data every time the user views the screen
         loadDataAndSetupChart()
     }
 
@@ -61,10 +58,8 @@ class SpendingInsightsActivity : AppCompatActivity() {
         if (userId == -1) return
 
         val calendar = Calendar.getInstance()
-        // Use Locale.US for database keys to avoid inconsistencies
         val currentMonth = SimpleDateFormat("yyyy-MM", Locale.US).format(calendar.time)
 
-        // Calculate date range for current month for the category graph
         val rangeCal = Calendar.getInstance()
         rangeCal.set(Calendar.DAY_OF_MONTH, 1)
         val startDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(rangeCal.time)
@@ -72,7 +67,6 @@ class SpendingInsightsActivity : AppCompatActivity() {
         rangeCal.set(Calendar.DAY_OF_MONTH, rangeCal.getActualMaximum(Calendar.DAY_OF_MONTH))
         val endDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(rangeCal.time)
 
-        // Fetch user-specific data from SQLite
         val budgetGoal = dbHelper.getBudgetGoal(currentMonth, userId)
         val spendingData = dbHelper.getCategorySpendingForDateRange(startDate, endDate, userId)
         val totalSpent = dbHelper.getMonthlyTotalSpent(userId, currentMonth)
@@ -80,7 +74,6 @@ class SpendingInsightsActivity : AppCompatActivity() {
         val barEntries = mutableListOf<BarEntry>()
         val labels = mutableListOf<String>()
 
-        // The graph will be blank if spendingData is empty (no expenses yet)
         spendingData.forEachIndexed { index, data ->
             barEntries.add(BarEntry(index.toFloat(), data.total.toFloat()))
             labels.add(data.categoryName)
@@ -89,7 +82,6 @@ class SpendingInsightsActivity : AppCompatActivity() {
         setupBarChart(barEntries, labels, budgetGoal)
         updatePerformanceCard(totalSpent, budgetGoal)
 
-        // Award badges based on real budget performance
         budgetGoal?.let {
             gamificationManager.checkAndAwardBadges(userId, totalSpent, it.maxGoal)
         }
@@ -105,15 +97,12 @@ class SpendingInsightsActivity : AppCompatActivity() {
         }
 
         val dataSet = BarDataSet(entries, "Spending by Category")
-        // Use defined colors or fallback
         val chartColors = mutableListOf<Int>()
         val baseColors = intArrayOf(
-            Color.parseColor("#8E24AA"), // Purple
-            Color.parseColor("#00897B"), // Teal
-            Color.parseColor("#F4511E"), // Deep Orange
-            Color.parseColor("#3949AB"), // Indigo
-            Color.parseColor("#D81B60"), // Pink
-            Color.parseColor("#43A047")  // Green
+            Color.parseColor("#8E24AA"), Color.parseColor("#00897B"),
+            Color.parseColor("#F4511E"), Color.parseColor("#3949AB"),
+            Color.parseColor("#D81B60"), Color.parseColor("#43A047"),
+            Color.parseColor("#FFB300"), Color.parseColor("#039BE5")
         )
         for (i in 0 until entries.size) {
             chartColors.add(baseColors[i % baseColors.size])
@@ -131,17 +120,16 @@ class SpendingInsightsActivity : AppCompatActivity() {
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.granularity = 1f
         xAxis.setDrawGridLines(false)
-        xAxis.labelRotationAngle = -25f
-        xAxis.labelCount = labels.size
+        xAxis.labelRotationAngle = -45f
+        xAxis.setLabelCount(labels.size)
 
         val leftAxis = binding.barChart.axisLeft
         leftAxis.removeAllLimitLines()
         leftAxis.axisMinimum = 0f
 
-        // Add limit lines for visual budget tracking on the graph
         budgetGoal?.let {
             if (it.maxGoal > 0) {
-                val maxLine = LimitLine(it.maxGoal.toFloat(), "Max Budget")
+                val maxLine = LimitLine(it.maxGoal.toFloat(), "Budget Limit")
                 maxLine.lineColor = Color.RED
                 maxLine.lineWidth = 2f
                 maxLine.enableDashedLine(10f, 10f, 0f)
@@ -149,16 +137,24 @@ class SpendingInsightsActivity : AppCompatActivity() {
                 maxLine.textColor = Color.RED
                 leftAxis.addLimitLine(maxLine)
 
-                // Ensure the graph scale can show the budget line
-                if (it.maxGoal > leftAxis.axisMaximum) {
-                    leftAxis.axisMaximum = (it.maxGoal * 1.1).toFloat()
-                }
+                // Ensure both bars and limit line are visible
+                val maxSpending = entries.maxByOrNull { it.y }?.y ?: 0f
+                val yMax = maxOf(it.maxGoal.toFloat(), maxSpending)
+                leftAxis.axisMaximum = (yMax * 1.25f) 
             }
         }
 
         binding.barChart.axisRight.isEnabled = false
         binding.barChart.description.isEnabled = false
         binding.barChart.legend.isEnabled = false
+        binding.barChart.setExtraOffsets(0f, 0f, 0f, 30f) // Extra padding for rotated labels
+        
+        // Allow horizontal scrolling if many categories
+        if (labels.size > 5) {
+            binding.barChart.setVisibleXRangeMaximum(5f)
+            binding.barChart.moveViewToX(0f)
+        }
+
         binding.barChart.animateY(1000)
         binding.barChart.invalidate()
     }
@@ -171,13 +167,6 @@ class SpendingInsightsActivity : AppCompatActivity() {
             return
         }
 
-        if (totalSpent == 0.0) {
-            binding.tvPerformanceStatus.text = "No Spending Yet"
-            binding.tvPerformanceDetail.text = "Your budget is R${String.format("%.0f", budgetGoal.maxGoal)}. Start logging expenses to track performance."
-            binding.tvPerformanceStatus.setTextColor(ContextCompat.getColor(this, R.color.purple_500))
-            return
-        }
-
         val status: String
         val detail: String
         val color: Int
@@ -185,18 +174,18 @@ class SpendingInsightsActivity : AppCompatActivity() {
         when {
             totalSpent > budgetGoal.maxGoal -> {
                 status = "Over Budget"
-                detail = "Exceeded your limit by R${String.format("%.2f", totalSpent - budgetGoal.maxGoal)}"
+                detail = "Exceeded your R${String.format("%.0f", budgetGoal.maxGoal)} limit by R${String.format("%.2f", totalSpent - budgetGoal.maxGoal)}"
                 color = Color.RED
             }
             totalSpent >= budgetGoal.maxGoal * 0.9 -> {
                 status = "Near Limit"
                 detail = "You've used ${String.format("%.0f", (totalSpent / budgetGoal.maxGoal) * 100)}% of your R${budgetGoal.maxGoal} budget."
-                color = Color.parseColor("#F57C00") // Orange
+                color = Color.parseColor("#F57C00")
             }
             else -> {
                 status = "On Track"
-                detail = "You are currently within your R${budgetGoal.maxGoal} budget boundaries."
-                color = Color.parseColor("#388E3C") // Dark Green
+                detail = "You are currently within your R${budgetGoal.maxGoal} budget."
+                color = Color.parseColor("#388E3C")
             }
         }
 
