@@ -44,6 +44,12 @@ class ViewExpensesActivity : AppCompatActivity() {
         initViews()
         setupRecyclerView()
 
+        // Hide back button if requested (e.g., when opened from bottom nav)
+        val hideBack = intent.getBooleanExtra("HIDE_BACK_BUTTON", false)
+        if (hideBack) {
+            btnBack.visibility = View.GONE
+        }
+
         // Load default period (last 30 days)
         loadDefaultPeriod()
 
