@@ -1,204 +1,91 @@
-
 # 💰 MoniedBudgetApp
 
-A comprehensive Android application for tracking personal expenses, managing budgets by category, and monitoring spending goals. Built with **SQLite** (no RoomDB) to demonstrate core Android development concepts including layouts, event handling, intents, and data persistence.
+A comprehensive, feature-rich Android application designed for personal finance management. Track your expenses, set ambitious savings goals, manage monthly budgets, and earn achievement badges as you master your finances. 
 
-## 📱 Features
+Built with a focus on **core Android development principles**, this project demonstrates high-level proficiency in UI design, data persistence, and interactive user experiences.
 
-### Core Functionality
-- ✅ **User Authentication** - Login system with username/password
-- ✅ **Category Management** - Create and manage expense categories
-- ✅ **Expense Tracking** - Add expenses with date, time range, description, category, and optional photos
-- ✅ **Monthly Goals** - Set minimum and maximum spending targets
-- ✅ **Periodic Reports** - View expenses within user-selectable date ranges
-- ✅ **Category Summary** - See total spending per category for any period
-- ✅ **Photo Evidence** - Capture and attach photos to expense entries
-- ✅ **Data Persistence** - All data saved locally using SQLite database
+## 📱 Key Features
 
-### Technical Highlights
-- 📐 **Multiple Layouts** - ConstraintLayout, LinearLayout, RelativeLayout
-- 📝 **EditText & NumberFormat** - Input validation and currency formatting
-- 🎚️ **SeekBar** - Interactive goal setting interface
-- 🎯 **Event Handling** - Click listeners, text watchers, seek bar listeners
-- 🔄 **Intents** - Explicit (activity navigation) & Implicit (camera, image viewing)
-- 🗄️ **SQLite Database** - Complete CRUD operations without RoomDB abstraction
+### 💎 Gamification & Achievements
+- **40+ Unlockable Badges**: From "First Step" to "Wealth Builder", the app rewards consistent tracking and smart saving.
+- **Milestone Tracking**: Earn rewards for logging expenses, reaching savings goals, and staying under budget.
+- **Dynamic Feedback**: Real-time notifications (toasts) when achievements are unlocked.
 
-## 🛠️ Tech Stack
+### 📈 Advanced Analytics
+- **Spending Insights**: Interactive bar charts (powered by **MPAndroidChart**) visualizing spending across categories.
+- **Performance Cards**: Quick summaries of your monthly budget status (On Track, Near Limit, or Over Budget).
+- **Category Summary**: Deep dive into where your money goes with selectable date ranges.
 
-| Component | Technology |
-|-----------|------------|
-| **Language** | Java / Kotlin (choose one) |
-| **Database** | SQLite (SQLiteOpenHelper) |
-| **UI** | XML layouts + Material Design |
-| **Image Handling** | Camera Intent + Internal Storage |
-| **Date/Time** | DatePickerDialog, TimePickerDialog |
-| **Concurrency** | AsyncTask / ExecutorService |
-| **Session Management** | SharedPreferences |
+### 🎯 Goal Setting
+- **Savings Goals**: Create dedicated targets for emergencies, holidays, or major purchases. Track progress with visual indicators.
+- **Monthly Budgeting**: Set minimum and maximum spending targets for each month to maintain financial discipline.
+
+### 📸 Expense Management
+- **Photo Evidence**: Capture receipt photos using the system camera or upload from the gallery.
+- **Detailed Entries**: Log amounts, categories, descriptions, and precise time ranges.
+- **Search & Filter**: View history by date range or specific categories.
+
+---
+
+## 🛠️ Technical Implementation
+
+### Data Persistence Architecture
+This project uniquely implements **Manual SQLite** (using `SQLiteOpenHelper`) alongside modern **Room Persistence Library**. This dual approach demonstrates:
+- **Raw SQL Proficiency**: Complex join queries and cursor management for detailed reporting.
+- **Background Operations**: Database tasks handled via Coroutines and Handlers to ensure smooth UI performance.
+- **Schema Management**: Versioned database upgrades and multi-table relationships.
+
+### UI/UX Design
+- **Material Design 3**: Modern, clean interface with standard components.
+- **ViewBinding & DataBinding**: Efficient UI interaction and data-to-view mapping.
+- **Dynamic Navigation**: Bottom navigation for quick access to core features.
+
+---
+
+## 📂 Project Structure
+
+```text
+app/src/main/java/com/monied/budgetapp/
+├── adapters/          # RecyclerView adapters (Expenses, Savings, Categories, Badges)
+├── data/              # Persistence Layer
+│   ├── database/      # Room DB configuration & Type Converters
+│   ├── dao/           # Data Access Objects for Room
+│   ├── model/         # Database Entities (Expense, Category, BudgetGoal, etc.)
+│   └── DatabaseHelper.kt # Core Manual SQLite implementation & Business Logic
+├── dialog/            # Custom UI Dialogs (Date Pickers, Badge Dialogs)
+├── models/            # Domain and UI-specific data models
+├── ui/                # UI Components
+│   ├── auth/          # Login, Registration, and Session management
+│   ├── fragments/     # Main feature fragments (Dashboard, History, Analytics)
+│   └── main/          # Core Activities (AddExpense, SavingsGoal, SpendingInsights)
+├── utils/             # Utility classes and GamificationManager
+└── MoniedApplication.kt # Application class & Global dependency initialization
+```
+
+---
 
 ## 📥 Installation
 
 ### Prerequisites
-- Android Studio (Latest stable version)
+- Android Studio (Iguana 2023.2.1 or newer)
 - Minimum SDK: API 24 (Android 7.0)
 - Target SDK: API 34 (Android 14)
 
-### Steps
-
-1. **Clone the repository**
+### Setup Steps
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/Kmakoro/MoniedBudgetApp.git
-   cd MoniedBudgetApp
-   
-
-# 🚀 Usage Guide
-## 1. First Time Setup
-Launch the app
-
-Create an account (Sign Up)
-
-Login with your credentials
-
-## 2. Create Categories
-Navigate to "Manage Categories"
-
-Tap "Add Category"
-
-Enter category name (e.g., "Food", "Transport", "Entertainment")
-
-## 3. Add an Expense
-Tap "Add Expense" on main screen
-
-Fill in:
-
-Date (select from calendar)
-
-Start/End times
-
-Description
-
-Amount spent
-
-Category (from dropdown)
-
-Optional: Tap camera icon to attach photo
-
-Tap "Save"
-
-## 4. Set Monthly Goals
-Go to "Monthly Goals"
-
-Use SeekBars or enter values for:
-
-Minimum spending goal
-
-Maximum spending goal
-
-Goals are saved per month
-
-## 5. View Reports
-Expense List: Select date range → View all expenses with photos
-
-Category Summary: Select date range → View total per category
-
-
-This project explicitly uses raw SQLite instead of RoomDB to demonstrate:
-
-Manual SQLiteOpenHelper implementation
-
-Raw SQL queries with rawQuery()
-
-Cursor management and data mapping
-
-Database operations on background threads
-
-Photo Handling
-Photos captured via Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-
-Stored in app-specific external storage directory
-
-Path saved as string in database
-
-Retrieved and displayed using BitmapFactory
-
-## 🧪 Testing
-Sample Test Data
-Default User:
-
-Username: cyril
-
-Password: password123
-
-Test Categories:
-
-Food & Dining
-
-Transportation
-
-Shopping
-
-Entertainment
-
-Bills & Utilities
-
-## 📋 Requirements Checklist
-Apply layouts in an app
-
-Use EditText, NumberFormat, and SeekBar
-
-Apply event handling
-
-Create an activity
-
-Apply an intent in an application
-
-Reading and writing to SQLite (not RoomDB)
-
-User login authentication
-
-Category creation
-
-Expense entry with date, times, description, category
-
-Optional photo attachment
-
-Monthly min/max goals
-
-View expenses by selectable period
-
-Photo access from expense list
-
-Category totals by selectable period
-
-## 🐛 Known Issues & Limitations
-Photos are stored locally; deleting app removes all images
-
-No cloud backup or sync functionality
-
-Password hashing not implemented (plain text for prototype)
-
-No email/password recovery
-
-Reports don't support CSV/PDF export
-
-## 🔜 Future Enhancements
-Password encryption (SHA-256 or bcrypt)
-
-Export reports to CSV/PDF
-
-Data visualization (pie charts, bar graphs)
-
-Recurring expenses automation
-
-Budget alerts and notifications
-
-Dark mode support
-
-Multi-currency support
-
-Backup/Restore functionality
-
-Fingerprint/Face ID login
-
-## ▶️ YouTube
-   ```bash
-   https://youtu.be/N9Pcvy3KOyg?si=YerJHw-VAHihpZtq
+   ```
+2. **Open in Android Studio**: Wait for Gradle to finish sync and indexing.
+3. **Run**: Select an emulator or connected device and press `Shift + F10`.
+
+---
+
+## 🧪 Testing & Demo
+- **Default Credentials**: 
+  - Username: `cyril`
+  - Password: `Password@123`
+- **Sample Data**: The app initializes with default categories (Groceries, Transport, etc.) to get you started immediately.
+
+## ▶️ Video Demo
+[![Monied App Demo](https://img.shields.io/badge/YouTube-Watch%20Demo-red?style=for-the-badge&logo=youtube)](https://youtu.be/N9Pcvy3KOyg?si=YerJHw-VAHihpZtq)
