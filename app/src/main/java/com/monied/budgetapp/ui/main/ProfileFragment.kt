@@ -81,10 +81,6 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        view.findViewById<ImageButton>(R.id.btnBack).setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
-
         view.findViewById<Button>(R.id.btnLogout).setOnClickListener {
             prefs.edit().remove("loggedInUser").remove("userId").apply()
             startActivity(Intent(requireContext(), LoginActivity::class.java))
