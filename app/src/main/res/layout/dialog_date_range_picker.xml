@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="?attr/colorSurface">
 
     <TextView
         android:layout_width="wrap_content"
@@ -11,6 +13,7 @@
         android:text="Quick Select"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
         android:layout_marginBottom="12dp" />
 
     <RadioGroup
@@ -22,25 +25,29 @@
             android:id="@+id/radioToday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Today" />
+            android:text="Today"
+            android:textColor="?attr/colorOnSurface" />
 
         <RadioButton
             android:id="@+id/radioThisWeek"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="This Week" />
+            android:text="This Week"
+            android:textColor="?attr/colorOnSurface" />
 
         <RadioButton
             android:id="@+id/radioThisMonth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="This Month" />
+            android:text="This Month"
+            android:textColor="?attr/colorOnSurface" />
 
         <RadioButton
             android:id="@+id/radioLast30Days"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Last 30 Days" />
+            android:text="Last 30 Days"
+            android:textColor="?attr/colorOnSurface" />
 
     </RadioGroup>
 
@@ -50,6 +57,7 @@
         android:text="Custom Range"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="12dp" />
 
@@ -57,15 +65,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:layout_marginBottom="8dp">
 
         <Button
             android:id="@+id/btnStartDate"
+            style="@style/Widget.Monied.Button.Outlined"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Start Date"
-            style="@style/Widget.Material3.Button.OutlinedButton" />
+            android:text="Start Date" />
 
         <TextView
             android:id="@+id/tvStartDateValue"
@@ -74,6 +83,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Select"
+            android:textColor="?attr/colorOnSurface"
             android:padding="8dp" />
 
     </LinearLayout>
@@ -81,15 +91,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
         <Button
             android:id="@+id/btnEndDate"
+            style="@style/Widget.Monied.Button.Outlined"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="End Date"
-            style="@style/Widget.Material3.Button.OutlinedButton" />
+            android:text="End Date" />
 
         <TextView
             android:id="@+id/tvEndDateValue"
@@ -98,6 +109,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Select"
+            android:textColor="?attr/colorOnSurface"
             android:padding="8dp" />
 
     </LinearLayout>
