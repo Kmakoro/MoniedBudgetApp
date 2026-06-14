@@ -25,19 +25,22 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew assembleDebug --stacktrace
+      run: ./gradlew assembleDebug --no-daemon
 
     - name: Run Unit Tests
-      run: ./gradlew testDebugUnitTest --stacktrace
+      run: ./gradlew testDebugUnitTest --no-daemon
 
     - name: Run Instrumented Tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
-        api-level: 29
-        target: default
-        arch: x86_64
+        api-level: 27
+        target: google_apis
+        arch: x86
         profile: Pixel_6
-        script: ./gradlew connectedDebugAndroidTest --stacktrace
+        disable-animations: true
+        force-avd-creation: true
+        emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+        script: ./gradlew connectedDebugAndroidTest --no-daemon --stacktrace
         
     - name: Upload Test Reports
       if: failure()
