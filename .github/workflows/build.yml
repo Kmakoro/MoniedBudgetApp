@@ -36,6 +36,7 @@ jobs:
         api-level: 29
         target: default
         arch: x86_64
+        profile: pixel
         disable-animations: true
         force-avd-creation: true
         emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
