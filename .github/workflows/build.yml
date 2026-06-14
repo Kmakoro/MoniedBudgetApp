@@ -33,14 +33,13 @@ jobs:
     - name: Run Instrumented Tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
-        api-level: 27
-        target: google_apis
-        arch: x86
-        profile: Pixel_6
+        api-level: 29
+        target: default
+        arch: x86_64
         disable-animations: true
         force-avd-creation: true
         emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
-        script: ./gradlew connectedDebugAndroidTest --no-daemon --stacktrace
+        script: ./gradlew connectedDebugAndroidTest --no-daemon
         
     - name: Upload Test Reports
       if: failure()
