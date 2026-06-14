@@ -3,6 +3,9 @@ package com.monied.budgetapp
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.monied.budgetapp.data.DatabaseHelper
+import com.monied.budgetapp.data.BudgetAlertData
+import com.monied.budgetapp.models.Category
+import com.monied.budgetapp.models.Expense
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
