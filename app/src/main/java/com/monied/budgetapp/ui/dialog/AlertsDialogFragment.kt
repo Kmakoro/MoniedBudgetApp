@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -53,14 +54,14 @@ class AlertsDialogFragment : BottomSheetDialogFragment() {
             return ViewHolder(v)
         }
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val context = holder.itemView.context
             val alert = alerts[position]
             holder.title.text = alert.title
-            val combinedMessage = alert.message + "\n" + alert.date
-            holder.message.text = combinedMessage
+            holder.message.text = context.getString(R.string.alert_message_format, alert.message, alert.date)
             
             // Basic styling for "Advanced" look
-            holder.title.setTextColor(0xFFEF4444.toInt()) // Red for alerts
-            holder.message.setTextColor(0xFF6B7280.toInt())
+            holder.title.setTextColor(ContextCompat.getColor(context, R.color.red_500))
+            holder.message.setTextColor(ContextCompat.getColor(context, R.color.gray_500))
         }
         override fun getItemCount() = alerts.size
         class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
