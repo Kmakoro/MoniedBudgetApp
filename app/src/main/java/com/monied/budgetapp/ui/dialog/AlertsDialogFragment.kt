@@ -55,7 +55,8 @@ class AlertsDialogFragment : BottomSheetDialogFragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val alert = alerts[position]
             holder.title.text = alert.title
-            holder.message.text = "${alert.message}\n${alert.date}"
+            val combinedMessage = alert.message + "\n" + alert.date
+            holder.message.text = combinedMessage
             
             // Basic styling for "Advanced" look
             holder.title.setTextColor(0xFFEF4444.toInt()) // Red for alerts
