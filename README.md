@@ -13,6 +13,9 @@ Monied is a comprehensive, feature-rich Android application designed to empower 
 
 ### 🏆 Advanced Gamification Engine
 Monied turns financial management into a journey with an extensive achievement system:
+- **Gamification Elements**: The app includes gamification elements such as rewards or badges for meeting budget goals or consistent expense logging.
+- **Consistent Logging**: Earn special badges for maintaining streaks and logging expenses daily.
+- **Goal Achievement Rewards**: Users are rewarded with exclusive badges when they successfully meet their budget goals.
 - **40+ Unlockable Badges**: Categorized by behavior and milestones.
   - **Milestone Badges**: "First Step", "Active Contributor", "Centurion".
   - **Savings Badges**: "Bronze/Silver/Gold Saver" and "Savings Pro".
@@ -21,11 +24,13 @@ Monied turns financial management into a journey with an extensive achievement s
 
 ### 📊 Precision Analytics & Reporting
 Visualize your financial health with interactive data tools:
-- **Dynamic Charts**: Powered by **MPAndroidChart**, providing high-level spending overviews.
-- **Category Deep-Dives**: Analyze spending distribution across categories like Groceries, Transport, and Entertainment.
+- **Interactive Category Graphs**: The user is able to view a graph showing the amount spent per category over a user-selectable period. The graph also displays the minimum and maximum goals to provide clear financial context.
+- **Visual Performance Tracking**: The app displays in a visual format how well the user is doing with staying between their minimum and maximum spending goals over the past month.
+- **Dynamic Overviews**: Powered by **MPAndroidChart**, providing high-level spending insights and real-time comparison against targets.
 
 ### 🛡️ Smart Budgeting & Alerts
-**Budget Alerts** act as real-time financial guardrails. By notifying users when they near their limits, these alerts provide the critical feedback loop needed to prevent overspending, empowering users to make informed decisions at the moment of purchase rather than regretting them later.
+Stay on track with proactive financial monitoring:
+- **Budget Alerts**: Act as real-time financial guardrails. By notifying users when they near their limits, these alerts provide the critical feedback loop needed to prevent overspending, empowering users to make informed decisions at the moment of purchase rather than regretting them later.
 - **Warning System**: Receive alerts when reaching 80% of your monthly limit.
 - **Over-limit Alerts**: Instant notification when a budget is exceeded.
 
@@ -89,12 +94,42 @@ The project is hosted on **GitHub**, utilizing its robust version control system
 ## 📂 Project Structure
 
 ```text
-app/src/main/java/com/monied/budgetapp/
-├── adapters/          # RecyclerView adapters for Expenses, Savings, and Badges
-├── data/              # Persistence Layer (Room, SQLite, Models)
-├── ui/                # UI Layer (Fragments, Activities, Dialogs)
-├── utils/             # Helper classes (GamificationManager, Formatting)
-└── MoniedApplication.kt # Global context initialization
+MoniedBudgetApp/
+├── .github/workflows/          # GitHub Actions CI/CD pipeline definitions
+├── app/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/com/monied/budgetapp/
+│   │   │   │   ├── adapters/          # RecyclerView adapters (Expense, Category, Savings, Report)
+│   │   │   │   ├── data/              # Data Persistence Layer
+│   │   │   │   │   ├── dao/           # Data Access Objects (Room)
+│   │   │   │   │   ├── database/      # Room Database & Type Converters
+│   │   │   │   │   ├── model/         # Database Entities (Expense, Category, BudgetGoal)
+│   │   │   │   │   └── DatabaseHelper.kt # SQLite Logic & Gamification Engine
+│   │   │   │   ├── ui/                # UI Layer
+│   │   │   │   │   ├── auth/          # Authentication (Login/Register)
+│   │   │   │   │   ├── fragments/     # Main Screens (Dashboard, History, Analytics, Profile)
+│   │   │   │   │   ├── dialog/        # Custom Dialogs and BottomSheets
+│   │   │   │   │   └── main/          # Core Feature Activities (AddExpense, Savings, Insights)
+│   │   │   │   ├── utils/             # Utilities (GamificationManager, Formatting)
+│   │   │   │   └── MoniedApplication.kt # Application Class & Initialization
+│   │   │   ├── res/
+│   │   │   │   ├── layout/            # XML Layouts for all Activities/Fragments/Items
+│   │   │   │   ├── drawable/          # Vector assets and custom shapes
+│   │   │   │   ├── values/            # Colors, Dimensions, Strings, and Light Theme
+│   │   │   │   ├── values-night/      # Dark Mode Theme overrides
+│   │   │   │   └── menu/              # Bottom Navigation and Toolbar menus
+│   │   │   └── AndroidManifest.xml    # System configuration and permissions
+│   │   ├── test/                      # Local JVM Unit Tests
+│   │   └── androidTest/               # Instrumented UI and Integration Tests
+│   ├── build.gradle.kts               # Module-level build script
+│   └── proguard-rules.pro             # R8/Proguard configuration
+├── gradle/                            # Gradle wrapper and configuration files
+├── build.gradle.kts                   # Project-level build script
+├── settings.gradle.kts                # Project structure definition
+├── gradle.properties                  # Build environment properties
+├── gradlew                            # Gradle wrapper script
+└── README.md                          # Comprehensive documentation and report
 ```
 
 ---
