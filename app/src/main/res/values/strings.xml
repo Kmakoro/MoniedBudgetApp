@@ -3,6 +3,9 @@
     <!-- App Name -->
     <string name="app_name">Monied</string>
 
+    <!-- Splash Screen -->
+    <string name="alert_message_format">%1$s\n%2$s</string>
+
     <!-- Login Screen -->
     <string name="login_welcome">Welcome Back</string>
     <string name="login_username_hint">Username</string>
