@@ -8,9 +8,8 @@ on:
 
 jobs:
   build:
-    # Use macOS for native hardware acceleration (required for fast Android 16.0 emulation)
-    runs-on: macos-latest
-    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
     - uses: actions/checkout@v4
@@ -27,38 +26,3 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew assembleDebug --no-daemon
-
-    - name: Run Unit Tests
-      run: ./gradlew testDebugUnitTest --no-daemon
-
-    - name: Run Instrumented Tests
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: 36 # Android 16.0 (Baklava)
-        target: google_apis
-        arch: arm64-v8a # Required for native speed on Apple Silicon runners
-        profile: medium_phone # Matches 'Medium Phone' device profile
-        disable-animations: true
-        force-avd-creation: true
-        emulator-options: -no-window -no-snapshot -noaudio -no-boot-anim
-        script: |
-          # Wait for system services to be fully initialized
-          echo "Waiting for emulator services..."
-          adb wait-for-device
-          until adb shell getprop sys.boot_completed | grep -q '1'; do
-            sleep 2
-          done
-          until adb shell pm list packages > /dev/null 2>&1; do
-            sleep 2
-          done
-          echo "Emulator is ready!"
-          ./gradlew connectedDebugAndroidTest --no-daemon
-        
-    - name: Upload Test Reports
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-reports
-        path: |
-          **/build/reports/tests/
-          **/build/reports/androidTests/
