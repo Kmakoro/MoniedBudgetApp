@@ -1,44 +1,67 @@
-# 💰 MoniedBudgetApp
+# 💰 Monied - Personal Finance & Budgeting App
 
-A comprehensive, feature-rich Android application designed for personal finance management. Track your expenses, set ambitious savings goals, manage monthly budgets, and earn achievement badges as you master your finances. 
+Monied is a comprehensive, feature-rich Android application designed to empower users to take control of their personal finances. It combines powerful tracking tools with a unique gamification engine to make financial discipline engaging and rewarding.
 
-Built with a focus on **core Android development principles**, this project demonstrates high-level proficiency in UI design, data persistence, and interactive user experiences.
-
-## 📱 Key Features
-
-### 💎 Gamification & Achievements
-- **40+ Unlockable Badges**: From "First Step" to "Wealth Builder", the app rewards consistent tracking and smart saving.
-- **Milestone Tracking**: Earn rewards for logging expenses, reaching savings goals, and staying under budget.
-- **Dynamic Feedback**: Real-time notifications (toasts) when achievements are unlocked.
-
-### 📈 Advanced Analytics
-- **Spending Insights**: Interactive bar charts (powered by **MPAndroidChart**) visualizing spending across categories.
-- **Performance Cards**: Quick summaries of your monthly budget status (On Track, Near Limit, or Over Budget).
-- **Category Summary**: Deep dive into where your money goes with selectable date ranges.
-
-### 🎯 Goal Setting
-- **Savings Goals**: Create dedicated targets for emergencies, holidays, or major purchases. Track progress with visual indicators.
-- **Monthly Budgeting**: Set minimum and maximum spending targets for each month to maintain financial discipline.
-
-### 📸 Expense Management
-- **Photo Evidence**: Capture receipt photos using the system camera or upload from the gallery.
-- **Detailed Entries**: Log amounts, categories, descriptions, and precise time ranges.
-- **Search & Filter**: View history by date range or specific categories.
+Built with a focus on **modern Android development principles**, Monied demonstrates proficiency in complex data management, interactive UI/UX design, and performance optimization.
 
 ---
 
-## 🛠️ Technical Implementation
+## 📱 Core Features
 
-### Data Persistence Architecture
-This project uniquely implements **Manual SQLite** (using `SQLiteOpenHelper`) alongside modern **Room Persistence Library**. This dual approach demonstrates:
-- **Raw SQL Proficiency**: Complex join queries and cursor management for detailed reporting.
-- **Background Operations**: Database tasks handled via Coroutines and Handlers to ensure smooth UI performance.
-- **Schema Management**: Versioned database upgrades and multi-table relationships.
+### 🏆 Advanced Gamification Engine
+Monied turns financial management into a journey with an extensive achievement system:
+- **40+ Unlockable Badges**: Categorized by behavior and milestones.
+  - **Milestone Badges**: "First Step", "Active Contributor", "Centurion" (based on entry counts).
+  - **Savings Badges**: "Bronze/Silver/Gold Saver" and "Savings Pro" as you grow your nest egg.
+  - **Behavioral Badges**: "Early Bird" (morning logs), "Night Owl" (late-night tracking), and "Weekend Warrior".
+  - **Discipline Badges**: "Streak Starter", "Consistency King", and "Financial Discipline" for regular usage.
+  - **Speciality Badges**: "Penny Pincher" (small savings), "Smart Spender" (detailed logging), and "Frugal February".
+- **Real-time Notifications**: Instant feedback via custom toasts and alerts when achievements are unlocked.
+- **Badge Showcase**: A dedicated gallery to view earned rewards and progress.
 
-### UI/UX Design
-- **Material Design 3**: Modern, clean interface with standard components.
-- **ViewBinding & DataBinding**: Efficient UI interaction and data-to-view mapping.
-- **Dynamic Navigation**: Bottom navigation for quick access to core features.
+### 📊 Precision Analytics & Reporting
+Visualize your financial health with interactive data tools:
+- **Dynamic Charts**: Powered by **MPAndroidChart**, providing high-level spending overviews.
+- **Weekly Breakdowns**: Track spending trends week-over-week to identify habits.
+- **Category Deep-Dives**: Analyze spending distribution across categories like Groceries, Transport, and Entertainment.
+- **Custom Date Ranges**: Filter history and analytics to specific periods for targeted reviews.
+
+### 🛡️ Smart Budgeting & Alerts
+Stay on track with proactive financial monitoring:
+- **Flexible Budgeting**: Set monthly minimum and maximum targets.
+- **Intelligent Alerts**: 
+  - **Warning System**: Receive alerts when reaching 80% of your monthly limit.
+  - **Over-limit Alerts**: Instant notification when a budget is exceeded.
+- **Budget Status Indicators**: Visual cues (On Track, Near Limit, Over Budget) across the dashboard.
+
+### 🎯 Goal Tracking
+- **Savings Targets**: Create goals for emergencies, vacations, or major purchases.
+- **Visual Progress**: Real-time progress bars showing how close you are to your targets.
+- **Goal Crusher Rewards**: Earn special recognition when you successfully reach a milestone.
+
+### 📸 Rich Expense Management
+- **Photo Evidence**: Attach receipt photos using the device camera or gallery integration (powered by **Glide**).
+- **Time-Range Tracking**: Log not just the date, but precise time ranges for activities.
+- **Detailed Categorization**: Pre-loaded categories with the ability to add and manage custom ones.
+- **Advanced History**: Searchable and filterable list of all financial transactions.
+
+---
+
+## 🛠️ Technical Architecture
+
+### Hybrid Data Persistence
+Monied employs a sophisticated dual-layered storage strategy to demonstrate versatility:
+- **Manual SQLite (SQLiteOpenHelper)**: Used for the core business logic, complex reporting queries, and the gamification engine. Features raw SQL proficiency with complex JOINs and aggregations.
+- **Room Persistence Library**: Leveraged for structured data entities and modern reactive data patterns.
+- **DataStore**: Used for lightweight preference management and session persistence.
+
+### Modern Android Tech Stack
+- **UI Framework**: Material Design 3 (M3) components for a modern, accessible interface.
+- **Binding**: Extensive use of **ViewBinding** and **DataBinding** to reduce boilerplate and ensure type-safety.
+- **Concurrency**: **Kotlin Coroutines** for smooth, non-blocking database operations.
+- **Image Loading**: **Glide** for optimized bitmap handling and receipt photo caching.
+- **Navigation**: **Jetpack Navigation Component** with Bottom Navigation for seamless flow.
+- **Background Tasks**: **WorkManager** for scheduled tasks (where applicable).
 
 ---
 
@@ -46,46 +69,41 @@ This project uniquely implements **Manual SQLite** (using `SQLiteOpenHelper`) al
 
 ```text
 app/src/main/java/com/monied/budgetapp/
-├── adapters/          # RecyclerView adapters (Expenses, Savings, Categories, Badges)
+├── adapters/          # RecyclerView adapters for Expenses, Savings, and Badges
 ├── data/              # Persistence Layer
 │   ├── database/      # Room DB configuration & Type Converters
-│   ├── dao/           # Data Access Objects for Room
-│   ├── model/         # Database Entities (Expense, Category, BudgetGoal, etc.)
-│   └── DatabaseHelper.kt # Core Manual SQLite implementation & Business Logic
-├── dialog/            # Custom UI Dialogs (Date Pickers, Badge Dialogs)
-├── models/            # Domain and UI-specific data models
-├── ui/                # UI Components
-│   ├── auth/          # Login, Registration, and Session management
-│   ├── fragments/     # Main feature fragments (Dashboard, History, Analytics)
-│   └── main/          # Core Activities (AddExpense, SavingsGoal, SpendingInsights)
-├── utils/             # Utility classes and GamificationManager
-└── MoniedApplication.kt # Application class & Global dependency initialization
+│   ├── dao/           # Data Access Objects (Room)
+│   ├── model/         # Database Entities (Expense, Category, BudgetGoal)
+│   └── DatabaseHelper.kt # Core SQLite Logic, Reporting, & Gamification Engine
+├── dialog/            # Custom BottomSheet and Dialog fragments
+├── models/            # Domain-specific data models
+├── ui/                # UI Layer
+│   ├── auth/          # Login & Registration flows
+│   ├── fragments/     # Feature Fragments (Dashboard, History, Analytics, Profile)
+│   └── main/          # Core Activities (AddExpense, SavingsGoal, Insights)
+├── utils/             # Helper classes for dates, formatting, and UI
+└── MoniedApplication.kt # Global context and dependency initialization
 ```
 
 ---
 
-## 📥 Installation
+## 📥 Getting Started
 
 ### Prerequisites
-- Android Studio (Iguana 2023.2.1 or newer)
-- Minimum SDK: API 24 (Android 7.0)
-- Target SDK: API 34 (Android 14)
+- **Android Studio**: Iguana (2023.2.1) or newer recommended.
+- **SDK**: Minimum API 24, Target API 34.
 
-### Setup Steps
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/Kmakoro/MoniedBudgetApp.git
-   ```
-2. **Open in Android Studio**: Wait for Gradle to finish sync and indexing.
-3. **Run**: Select an emulator or connected device and press `Shift + F10`.
+### Setup
+1. Clone the repository: `git clone https://github.com/Kmakoro/MoniedBudgetApp.git`
+2. Open the project in Android Studio.
+3. Sync Gradle and build the project.
+4. Run on an emulator or physical device.
+
+### Demo Credentials
+- **Username**: `cyril`
+- **Password**: `Password@123`
 
 ---
-
-## 🧪 Testing & Demo
-- **Default Credentials**: 
-  - Username: `cyril`
-  - Password: `Password@123`
-- **Sample Data**: The app initializes with default categories (Groceries, Transport, etc.) to get you started immediately.
 
 ## ▶️ Video Demo
 [![Monied App Demo](https://img.shields.io/badge/YouTube-Watch%20Demo-red?style=for-the-badge&logo=youtube)](https://youtu.be/N9Pcvy3KOyg?si=YerJHw-VAHihpZtq)
