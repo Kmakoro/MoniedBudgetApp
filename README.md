@@ -151,4 +151,4 @@ MoniedBudgetApp/
 ---
 
 ## ▶️ Video Demo
-[![Monied App Demo](https://img.shields.io/badge/YouTube-Watch%20Demo-red?style=for-the-badge&logo=youtube)](https://youtu.be/N9Pcvy3KOyg?si=YerJHw-VAHihpZtq)
+[![Monied App Demo](https://img.shields.io/badge/YouTube-Watch%20Demo-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=LWs_Zhnmngw)
